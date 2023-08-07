@@ -2,7 +2,7 @@ import axios from 'axios'
 import type { HeadersDefaults, AxiosRequestConfig } from 'axios'
 import { message } from 'antd'
 
-const BASE_URL = '/api'
+const BASE_URL = '/api/http://8.140.38.47:3001/'
 // 添加额外的头部配置
 interface Header extends HeadersDefaults {
   'Content-Type': string

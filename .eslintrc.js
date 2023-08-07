@@ -21,7 +21,10 @@ module.exports = {
       "@typescript-eslint/no-unused-vars": "off",
       "@typescript-eslint/space-before-function-paren": "off",
       "@typescript-eslint/explicit-function-return-type": "off",
-      "@typescript-eslint/no-unnecessary-type-assertion": "off"
+      "@typescript-eslint/no-unnecessary-type-assertion": "off",
+      "@typescript-eslint/return-await": "off",
+      "@typescript-eslint/naming-convention": "off",
+      "@typescript-eslint/quotes": "off"
     },
     "parserOptions": {
       "ecmaVersion": "latest",
