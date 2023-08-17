@@ -34,6 +34,7 @@ export interface IManagerRole {
   phone: string
   role: IRole
   username: string
+  studentNo: string
 }
 // manage
 export type IRange = 'member' | 'leader' | 'all'

@@ -27,7 +27,7 @@ export default function MInfo() {
   const [item, setItem] = useState<IItem>()
   const [warn, setWarn] = useState<string>()
   const [maskLoading, setMaskLoading] = useState(false)
-  const { checkPhone, checkEmail, checkResume } = useVarify()
+  const { checkPhone, checkEmail } = useVarify()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [imageUrl, setImageUrl] = useState<string>()
   const [loading, setLoading] = useState(false)
@@ -48,15 +48,6 @@ export default function MInfo() {
     labelCol: { span: 4 },
     wrapperCol: { span: 20 }
   }
-
-  // // 学生修改信息
-  // const updateStuInfo = async (phoneNumber?: string, email?: string, resume?: string) => {
-  //   const res = await updateInfo(phoneNumber, email, resume)
-  //   if (res?.status === 20000) {
-  //     refresh()
-  //     message.success(res.msg)
-  //   }
-  // }
 
   // 刷新
   const refresh = () => {
@@ -181,6 +172,7 @@ export default function MInfo() {
             <img src={info?.avatar} className={style.avatarIcon}></img>
           </div>
           <div className={style.info}>
+            <span>账号：</span><span>{info?.studentNo}</span>
             <span>姓名：</span><span>{info?.username}</span>
             <span>联系电话：</span>
             <div

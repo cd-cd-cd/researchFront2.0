@@ -39,3 +39,14 @@
   flex-direction: row;
   margin-top: 10px;
 }
+
+.noGroup{
+  display: flex;
+  justify-content: space-between;
+}
+
+.groupHead{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

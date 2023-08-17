@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import style from './index.module.scss'
 import { useForm } from 'antd/lib/form/Form'
 import Column from 'antd/lib/table/Column'
-import { createUser, getMember, getteaminfos } from '../../../api/Manager'
+import { createUser, getMember, getteaminfos, newGroup } from '../../../api/Manager'
 import { type IRole, type IMembersTable, type IRange, type ITeamInfoLists } from '../../../libs/model'
 import dayjs from 'dayjs'
 
@@ -24,8 +24,8 @@ export default function TeamManage() {
   }
 
   const onFinish = async (values: any) => {
-    const { username } = values
-    const res = await createUser(username)
+    const { username, name } = values
+    const res = await createUser(username, name)
     if (res?.code === 200) {
       message.success('成员创建成功')
       getList(range as IRange)
@@ -84,9 +84,23 @@ export default function TeamManage() {
   const viewGroupInfo = async (memberInfo: IMembersTable) => {
     const res = await getteaminfos(memberInfo.studentNo)
     console.log(res?.data)
-    // setGroupLists(res?.data)
+    setGroupLists(res?.data)
     setOpen(true)
     setPersonInfo(memberInfo)
+  }
+
+  const setLeader = async () => {
+    if (personInfo?.studentNo) {
+      const res = await newGroup(personInfo?.studentNo)
+      if (res?.code === 200) {
+        message.success('设置成功')
+        setPersonInfo({ ...personInfo, role: 2 })
+        viewGroupInfo(personInfo)
+        getList(range as IRange)
+      } else {
+        message.info(res?.message)
+      }
+    }
   }
 
   useEffect(() => {
@@ -161,9 +175,21 @@ export default function TeamManage() {
           onFinish={onFinish}
         >
           <Form.Item
+            name='name'
+            label='姓名'
+            rules={[
+              { required: true, message: '请输入姓名' },
+              { max: 20, message: '姓名长度20以内' },
+              { pattern: /^([\u4e00-\u9fa5]{2,20}|[a-zA-Z.\s]{2,20})$/, message: '姓名不合法' }
+            ]}
+          >
+            <Input placeholder='请输入姓名'></Input>
+          </Form.Item>
+          <Form.Item
             name='username'
             label='成员学号'
-            rules={[{ required: true, message: '请输入学号' },
+            rules={[
+              { required: true, message: '请输入学号' },
               { pattern: /^[0-9]+.?[0-9]*$/, message: '学号不合法' },
               { max: 20, message: '学号长度20以内' }
             ]}
@@ -190,24 +216,47 @@ export default function TeamManage() {
         width='600px'
       >
         <div>
-          <div>{personInfo?.role ? renderRole(personInfo?.role) : ''}{personInfo?.username} - {personInfo?.studentNo}</div>
-          <div className={style.groupInfo}>
+          <div className={style.groupHead}>
             <div>
-              <Tag color='geekblue'>组长</Tag>
               {
-                groupLists ? groupLists.leader_infos.username : ''
+                personInfo?.role === 2
+                  ? <Button size='small' style={{ marginRight: '5px' }}>切换</Button>
+                  : null
               }
+              {personInfo?.role ? renderRole(personInfo?.role) : null}{personInfo?.username} - {personInfo?.studentNo}
             </div>
-            <div className={style.memberBox}>
-              <Tag color='blue'>组员</Tag>
-              <div className={style.memberlist}>
-              {
-                groupLists
-                  ? groupLists.member_infos.map(user => <span key={user.student_no}>{user.username}</span>)
-                  : '暂无组员'
-              }
-            </div>
-            </div>
+            {
+              personInfo?.role === 2
+                ? <div><Button size='small'>添加组员</Button></div>
+                : null
+            }
+          </div>
+          <div className={style.groupInfo}>
+            {
+              groupLists?.leader_infos
+                ? <>
+                  <div>
+                    <Tag color='geekblue'>组长</Tag>
+                    {
+                      groupLists?.leader_infos ? groupLists.leader_infos.username : ''
+                    }
+                  </div>
+                  <div className={style.memberBox}>
+                    <Tag color='blue'>组员</Tag>
+                    <div className={style.memberlist}>
+                      {
+                        !groupLists?.member_infos || (Array.isArray(groupLists.member_infos) && groupLists.member_infos.length === 0)
+                          ? '暂无组员'
+                          : groupLists.member_infos.map(user => <span key={user.student_no}>{user.username}</span>)
+                      }
+                    </div>
+                  </div>
+                </>
+                : <div className={style.noGroup}>
+                  <span>该组员暂未加入任何组</span>
+                  <Button onClick={() => setLeader()}>为该组员成立小组</Button>
+                </div>
+            }
           </div>
         </div>
       </Drawer>

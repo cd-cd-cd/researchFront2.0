@@ -23,12 +23,13 @@ export const getManagerInfo = async () => {
 }
 
 // 管理员创建角色 一开始创建普通组员
-export const createUser = async (studentNo: string) => {
+export const createUser = async (studentNo: string, username: string) => {
   return await request({
     url: '/v1/user/account/register/',
     method: 'POST',
     data: {
-      studentNo
+      studentNo,
+      username
     }
   })
 }
@@ -92,5 +93,25 @@ export const getteaminfos = async (studentNo: string) => {
     params: {
       studentNo
     }
+  })
+}
+
+// 5. 新建小组，并且将该组员设置为组长
+export const newGroup = async (studentNo: string, role = 2) => {
+  return await request({
+    url: '/v1/user/management/addleader/',
+    method: 'POST',
+    params: {
+      role,
+      studentNo
+    }
+  })
+}
+
+// 7. 6. 管理员获得所有没有进入到任何组的组员
+export const getNoGroupMember = async () => {
+  return await request({
+    url: '/v1/user/management/getnoneuserlist/',
+    method: 'GET'
   })
 }
