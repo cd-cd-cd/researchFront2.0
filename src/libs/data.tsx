@@ -1,32 +1,33 @@
 import { type IOption, type ITabBarCommon } from './model'
 
-export const studentFunc: ITabBarCommon[] = [
+export const memberFunc: ITabBarCommon[] = [
   { label: '个人信息', value: 0, name: 'personInfo' },
-  { label: '设备管理', value: 1, name: 'deviceManager' },
-  { label: '组会管理', value: 2, name: 'groupManage' },
-  { label: '周报管理', value: 3, name: 'weekReport' },
-  // { label: '经费报销', value: 4, name: 'reimbursement' },
-  { label: '请假管理', value: 4, name: 'leaveRequest' },
-  { label: '成果管理', value: 5, name: 'production' },
-  { label: '项目管理', value: 6, name: 'project' }
+  { label: '设备管理', value: 1, name: 'device' }
+  // { label: '组会管理', value: 2, name: 'groupManage' },
+  // { label: '周报管理', value: 3, name: 'weekReport' },
+  // // { label: '经费报销', value: 4, name: 'reimbursement' },
+  // { label: '请假管理', value: 4, name: 'leaveRequest' },
+  // { label: '成果管理', value: 5, name: 'production' },
+  // { label: '项目管理', value: 6, name: 'project' }
 ]
 
-export const teacherFunc: ITabBarCommon[] = [
+export const leaderFunc: ITabBarCommon[] = [
   { label: '个人信息', value: 0, name: 'personInfo' },
-  { label: '成员管理', value: 1, name: 'teamManager' },
-  { label: '设备管理', value: 2, name: 'TDeviceManager' },
-  { label: '组会管理', value: 3, name: 'groupManage' },
-  { label: '周报管理', value: 4, name: 'TWeekReport' },
+  { label: '成员管理', value: 1, name: 'device' }
+  // { label: '设备管理', value: 2, name: 'TDeviceManager' },
+  // { label: '组会管理', value: 3, name: 'groupManage' },
+  // { label: '周报管理', value: 4, name: 'TWeekReport' },
   // { label: '经费报销', value: 5, name: 'TReimbursement' },
-  { label: '请假管理', value: 5, name: 'TLeaveRequest' },
-  { label: '成果管理', value: 6, name: 'TProduction' },
-  { label: '项目管理', value: 7, name: 'TProject' },
-  { label: '数据管理', value: 8, name: 'TDataManage' }
+  // { label: '请假管理', value: 5, name: 'TLeaveRequest' },
+  // { label: '成果管理', value: 6, name: 'TProduction' },
+  // { label: '项目管理', value: 7, name: 'TProject' },
+  // { label: '数据管理', value: 8, name: 'TDataManage' }
 ]
 
 export const managerFunc: ITabBarCommon[] = [
   { label: '个人信息', value: 0, name: 'MInfo' },
-  { label: '用户管理', value: 1, name: 'userControl' }
+  { label: '成员管理', value: 1, name: 'TeamManage' }
+  // { label: '用户管理', value: 1, name: 'userControl' }
   // { label: '经费报销', value: 2, name: 'MReimbursement' }
   // { label: '数据管理', value: 3, name: 'MDataManage' }
 ]

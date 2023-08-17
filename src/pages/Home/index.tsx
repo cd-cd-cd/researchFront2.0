@@ -7,7 +7,7 @@ import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import TabBar from '../../components/TabBar'
 import useTabBar from '../../hooks/useTabBar'
 import { context } from '../../hooks/store'
-import { managerFunc, studentFunc, teacherFunc } from '../../libs/data'
+import { leaderFunc, managerFunc, memberFunc } from '../../libs/data'
 import { type IRole, type ITabBarCommon } from '../../libs/model'
 import useClear from '../../hooks/useClear'
 
@@ -43,11 +43,11 @@ export default function Home () {
   // 根据路由显示header
   const headerText = () => {
     switch (role) {
-      case 0:
+      case 3:
         return '-组员端'
-      case 1:
-        return '-组长端'
       case 2:
+        return '-组长端'
+      case 1:
         return '-管理员端'
       default:
         return null
@@ -66,17 +66,17 @@ export default function Home () {
     const roleTemp = location.pathname.split('/')[1]
     switch (roleTemp) {
       case 'member':
-        setRole(0)
-        setFunc(studentFunc)
-        addTabBar(studentFunc[0])
+        setRole(3)
+        setFunc(memberFunc)
+        addTabBar(memberFunc[0])
         break
       case 'leader':
-        setRole(1)
-        setFunc(teacherFunc)
-        addTabBar(teacherFunc[0])
+        setRole(2)
+        setFunc(leaderFunc)
+        addTabBar(leaderFunc[0])
         break
       case 'manager':
-        setRole(2)
+        setRole(1)
         setFunc(managerFunc)
         addTabBar(managerFunc[0])
         break
@@ -88,13 +88,13 @@ export default function Home () {
   useEffect(() => {
     const path = func[tabBarId]
     switch (role) {
-      case 0:
+      case 3:
         navigator(`/member/${path.name}`)
         break
-      case 1:
+      case 2:
         navigator(`/leader/${path.name}`)
         break
-      case 2:
+      case 1:
         navigator(`/manager/${path.name}`)
         break
       default:

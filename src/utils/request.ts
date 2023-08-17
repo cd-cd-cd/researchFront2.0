@@ -2,7 +2,7 @@ import axios from 'axios'
 import type { HeadersDefaults, AxiosRequestConfig } from 'axios'
 import { message } from 'antd'
 
-const BASE_URL = '/api/http://8.140.38.47:3001/'
+const BASE_URL = '/api'
 // 添加额外的头部配置
 interface Header extends HeadersDefaults {
   'Content-Type': string
@@ -10,14 +10,11 @@ interface Header extends HeadersDefaults {
 }
 (axios.defaults.headers as Header)['Content-Type'] = 'application/json'
 
-// 返回数据格式
 interface Response<T> {
-  status: number
+  code: number
   data: T
-  msg: string
-  success: boolean
+  message: string
 }
-
 const service = axios.create({
   baseURL: BASE_URL,
   timeout: 5000

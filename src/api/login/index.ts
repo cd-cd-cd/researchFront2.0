@@ -1,12 +1,12 @@
 import { type ILoginRes } from "../../libs/model"
 import request from "../../utils/request"
 
-export const login = async (student_no: string, password: string) => {
+export const login = async (studentNo: string, password: string) => {
   return await request<ILoginRes>({
-    url: '/login',
+    url: '/v1/user/account/login/',
     method: 'POST',
-    params: {
-      student_no,
+    data: {
+      studentNo,
       password
     }
   })

@@ -1,30 +1,37 @@
 import React from 'react'
 import style from './index.module.scss'
 import headerIcon from '../../assets/imgs/science_icon.svg'
-import { Button, Form, Input, Radio } from 'antd'
+import { Button, Form, Input, Radio, message } from 'antd'
 import { useNavigate } from 'react-router-dom'
+import { login } from '../../api/login'
+import { type ILoginValues } from '../../libs/model'
 
-export default function Login () {
+export default function Login() {
   const [form] = Form.useForm()
   const navigator = useNavigate()
-  const onFinish = async () => {
-    // const res = await login(values.role, values.username, values.password)
-    // if (res?.status === 10001) {
-    //   localStorage.setItem('token', res.data.token)
-    //   localStorage.setItem('id', res.data.id)
-    //   message.success('登录成功')
-    //   const { role } = values
-    //   if (role === 0) {
-    //     localStorage.setItem('role', '0')
-    //     navigator('/student')
-    //   } else if (role === 1) {
-    //     localStorage.setItem('role', '1')
-    //     navigator('/teacher')
-    //   } else if (role === 2) {
-    //     localStorage.setItem('role', '2')
-    //     navigator('/manager')
-    //   }
-    // }
+  const onFinish = async (values: ILoginValues) => {
+    const res = await login(values.username, values.password)
+    if (res?.code === 200) {
+      const { role, token } = res.data
+      if (role !== values.role) {
+        message.info('角色错误')
+      } else {
+        localStorage.setItem('token', token!)
+        message.success('登录成功')
+        if (role === 3) {
+          localStorage.setItem('role', '3')
+          navigator('/member')
+        } else if (role === 2) {
+          localStorage.setItem('role', '2')
+          navigator('/leader')
+        } else if (role === 1) {
+          localStorage.setItem('role', '1')
+          navigator('/manager')
+        }
+      }
+    } else {
+      message.info(res?.message)
+    }
   }
 
   const onFinishFailed = (errorInfo: any) => {
@@ -33,6 +40,10 @@ export default function Login () {
 
   const onReset = () => {
     form.resetFields()
+  }
+
+  const gotoRegister = () => {
+    navigator('/register')
   }
 
   return (
@@ -56,12 +67,12 @@ export default function Login () {
               rules={[
                 { required: true, message: '请选择角色' }
               ]}
-              initialValue={0}
+              initialValue={1}
             >
               <Radio.Group>
-                <Radio value={0}>学生</Radio>
-                <Radio value={1}>老师</Radio>
-                <Radio value={2}>管理员</Radio>
+                <Radio value={3}>成员</Radio>
+                <Radio value={2}>组长</Radio>
+                <Radio value={1}>管理员</Radio>
               </Radio.Group>
             </Form.Item>
             <Form.Item
@@ -89,6 +100,7 @@ export default function Login () {
             </Form.Item>
             <Form.Item>
               <div>
+                <p className={style.registerText} onClick={gotoRegister}>管理员注册入口</p>
                 <p className={style.warning_text}>本网站禁止爬虫采集或转载商业化</p>
                 <p>本网站建议使用谷歌浏览器</p>
               </div>

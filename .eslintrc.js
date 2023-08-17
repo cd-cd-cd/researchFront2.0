@@ -24,7 +24,9 @@ module.exports = {
       "@typescript-eslint/no-unnecessary-type-assertion": "off",
       "@typescript-eslint/return-await": "off",
       "@typescript-eslint/naming-convention": "off",
-      "@typescript-eslint/quotes": "off"
+      "@typescript-eslint/quotes": "off",
+      "@typescript-eslint/no-var-requires": "off",
+      "@typescript-eslint/no-confusing-void-expression": "off"
     },
     "parserOptions": {
       "ecmaVersion": "latest",

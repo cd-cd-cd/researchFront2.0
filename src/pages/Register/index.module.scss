@@ -67,11 +67,6 @@
   }
 }
 
-.warning_text{
-  color: rgb(237, 57, 57);
-  margin: 0;
-}
-
 .registerText{
   color: #1890ff;
   cursor: pointer;
@@ -79,4 +74,13 @@
 
 .registerText:hover {
   color: #46a4fd
+}
+
+.title{
+  font-size: 23px;
+  color: dimgray;
+  font-weight: 700;
+  text-align: center;
+  margin-top: 20px;
+  margin-bottom: -15px;
 }
