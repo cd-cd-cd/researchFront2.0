@@ -50,3 +50,43 @@
   justify-content: space-between;
   align-items: center;
 }
+
+.selectOption {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+.drawer {
+  height: 100%;
+  position: relative;
+}
+.bottom{
+  position: absolute;
+  bottom: 0;
+  right: 50%;
+}
+
+.tag{
+  height: 21.6px;
+}
+
+.excelImg{
+  width: 80%;
+}
+
+.modalText{
+  color: dimgray;
+  margin-top: 5px;
+  margin-bottom: 10px;
+}
+
+.fileName{
+  color: dimgray;
+  margin-left: 6px;
+}
+
+.uploadClick_box {
+  margin-top: 5px;
+}

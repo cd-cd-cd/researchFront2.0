@@ -1,24 +1,51 @@
-import { Button, Drawer, Form, Input, Modal, Select, Table, Tag, message } from 'antd'
 import React, { useEffect, useState } from 'react'
+import { Button, Drawer, Form, Input, Modal, Popconfirm, Select, Table, Tag, message, Image, Upload } from 'antd'
 import style from './index.module.scss'
 import { useForm } from 'antd/lib/form/Form'
 import Column from 'antd/lib/table/Column'
-import { createUser, getMember, getteaminfos, newGroup } from '../../../api/Manager'
+import excelImg from '../../../assets/imgs/excelModal.png'
+import { UploadOutlined } from '@ant-design/icons'
+import { type IResGetPersonByStudentNo, createUser, delmember, getMember, getNoGroupMember, getPersonByStudentNo, getteaminfos, newGroup, updateleader, delteam, addMembers, uploadExcel } from '../../../api/Manager'
 import { type IRole, type IMembersTable, type IRange, type ITeamInfoLists } from '../../../libs/model'
 import dayjs from 'dayjs'
+import { type RcFile } from 'antd/lib/upload'
 
+interface IOption {
+  label: string
+  value: string
+}
 export default function TeamManage() {
+  // drawer's open
   const [open, setOpen] = useState(false)
-  const [personInfo, setPersonInfo] = useState<IMembersTable>()
+  // 存储抽屉人信息
+  const [personInfo, setPersonInfo] = useState<IResGetPersonByStudentNo>()
+  // 组信息
   const [groupLists, setGroupLists] = useState<ITeamInfoLists>()
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [members, setMembers] = useState<IMembersTable[]>()
+  const [members, setMembers] = useState<IMembersTable[]>([])
   const [loading, setLoading] = useState(false)
   const [current, setCurrent] = useState(1)
   const [range, setRange] = useState('all')
   const [total, setTotal] = useState<number>(0)
+  // 存储流浪组员
+  const [noGroupMembersOption, setNoGroupMembersOption] = useState<IOption[]>()
+  // 添加组员列表是否打开
+  const [isOptionOpen, setIsOptionOpen] = useState(false)
+  // 保存添加的组员
+  const [memberStudentNos, setMemberStudentNos] = useState<string[]>()
+  // 记录【组内切换组员】按钮是否点击
+  const [isClickChangeBtn, setIsClickChangeBtn] = useState(false)
+  // 记录切换的组员
+  const [changeMember, setChangeMember] = useState<string>()
+  // 组员option
+  const [membersOption, setMembersOption] = useState<IOption[]>([])
+  // 批量生成组员modal
+  const [isUploadMembersModal, setIsUploadMembersModal] = useState(false)
+  // 存储excel文件
+  const [excelFile, setExcelFile] = useState<RcFile>()
   const [form] = useForm()
   const handleCancel = () => {
+    setIsOptionOpen(false)
     setIsModalOpen(false)
     form.resetFields()
   }
@@ -81,21 +108,51 @@ export default function TeamManage() {
     }
   }
 
-  const viewGroupInfo = async (memberInfo: IMembersTable) => {
-    const res = await getteaminfos(memberInfo.studentNo)
-    console.log(res?.data)
+  // 根据抽屉人信息 得到组长组员信息
+  const getLeaderMembers = async (studentNo: string) => {
+    const res = await getteaminfos(studentNo)
     setGroupLists(res?.data)
+    if (res?.data.member_infos) {
+      setMembersOption(res?.data.member_infos.reduce((pre: IOption[], cur) => {
+        pre.push({
+          value: cur.student_no,
+          label: cur.username
+        })
+        return pre
+      }, []))
+    }
+  }
+  // 打开抽屉 查看抽屉人信息 查看组所有信息
+  const viewGroupInfo = async (memberInfo: IMembersTable) => {
+    getPersonInfo(memberInfo.studentNo)
+    getLeaderMembers(memberInfo.studentNo)
     setOpen(true)
-    setPersonInfo(memberInfo)
   }
 
+  // 通过学号获取到抽屉人信息 并存储起来(学号 姓名 角色)
+  const getPersonInfo = async (studentNo: string) => {
+    const res = await getPersonByStudentNo(studentNo)
+    if (res?.code === 200) {
+      setPersonInfo(res?.data)
+    }
+  }
+
+  // 更新抽屉
+  const refreshDrawer = () => {
+    if (personInfo?.studentNo) {
+      getPersonInfo(personInfo.studentNo)
+      getLeaderMembers(personInfo.studentNo)
+      getList(range as IRange)
+    }
+  }
+  // 设置组长
   const setLeader = async () => {
     if (personInfo?.studentNo) {
       const res = await newGroup(personInfo?.studentNo)
       if (res?.code === 200) {
         message.success('设置成功')
-        setPersonInfo({ ...personInfo, role: 2 })
-        viewGroupInfo(personInfo)
+        // 重新更新抽屉人信息&&组信息
+        refreshDrawer()
         getList(range as IRange)
       } else {
         message.info(res?.message)
@@ -103,6 +160,130 @@ export default function TeamManage() {
     }
   }
 
+  // 点击添加组员按钮
+  const clickAddMemberBtn = async () => {
+    setIsOptionOpen(true)
+    const res = await getNoGroupMember()
+    if (res?.code === 200) {
+      const temp: IOption[] = res.data.reduce((pre: IOption[], cur) => {
+        pre.push({
+          value: cur.student_no,
+          label: cur.username
+        })
+        return pre
+      }, [])
+      setNoGroupMembersOption(temp)
+    } else {
+      message.info(res?.message)
+    }
+  }
+
+  // 将莫组员从某组踢出
+  const deleteMember = async (student_no: string) => {
+    const res = await delmember(student_no)
+    if (res?.code === 200) {
+      message.success('删除成功')
+      if (personInfo?.studentNo) {
+        getLeaderMembers(personInfo?.studentNo)
+      }
+    } else {
+      message.info(res?.message)
+    }
+  }
+
+  const handleChangeOption = (value: string[]) => {
+    setMemberStudentNos(value)
+  }
+
+  // 点击管理员切换组长确定按钮
+  const updateLeader = async () => {
+    console.log('leaderInfo', groupLists?.leader_infos.studentNo)
+    if (changeMember && groupLists?.leader_infos.studentNo) {
+      const res = await updateleader(groupLists?.leader_infos.studentNo, changeMember)
+      if (res?.code === 200) {
+        getList(range as IRange)
+        setChangeMember('')
+        setIsClickChangeBtn(false)
+        refreshDrawer()
+        message.success('切换成功')
+      } else {
+        message.info(res?.message)
+      }
+    }
+  }
+
+  const handleChangeMember = (value: string) => {
+    setChangeMember(value)
+  }
+
+  // 解散团队
+  const deleteTeam = async () => {
+    if (groupLists?.leader_infos.studentNo) {
+      const res = await delteam(groupLists?.leader_infos.studentNo)
+      if (res?.code === 200) {
+        refreshDrawer()
+        message.success('该组解散成功')
+      } else {
+        message.info(res?.message)
+      }
+    }
+  }
+
+  // 添加组员
+  const addMembersBtn = async () => {
+    if (memberStudentNos?.length && groupLists?.leader_infos.studentNo) {
+      const res = await addMembers(groupLists?.leader_infos.studentNo, memberStudentNos.join(','))
+      if (res?.code === 200) {
+        message.success('添加成功')
+        setMemberStudentNos([])
+        setIsOptionOpen(false)
+        refreshDrawer()
+      } else {
+        message.info(res?.message)
+      }
+    }
+  }
+  // 关闭抽屉
+  const closeDrawer = () => {
+    setChangeMember('')
+    setIsClickChangeBtn(false)
+    setIsOptionOpen(false)
+    setMemberStudentNos([])
+    setOpen(false)
+  }
+
+  // 管理上传excel modal
+  const handlecancelMember = () => {
+    setIsUploadMembersModal(false)
+    setExcelFile(undefined)
+  }
+
+  // 检查excel
+  const beforeUpload = (file: RcFile) => {
+    const isTypeTrue = file.type === 'application/vnd.ms-excel' || file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    if (!isTypeTrue) {
+      message.error(`${file.name} 文件只能为xls或者xlsx格式`)
+    } else {
+      setExcelFile(file)
+    }
+    return isTypeTrue
+  }
+
+  // 点击上传excel按钮
+  const uploadfile = async () => {
+    if (excelFile) {
+      const temp = new FormData()
+      temp.append('file', excelFile)
+      const res = await uploadExcel(temp)
+      if (res?.code === 200) {
+        console.log(res)
+      } else {
+        message.info(res?.message)
+      }
+    } else {
+      message.info('还未选择文件!')
+    }
+  }
   useEffect(() => {
     getList('all')
   }, [])
@@ -140,7 +321,7 @@ export default function TeamManage() {
         </div>
         <div>
           <Button onClick={() => setIsModalOpen(true)}>创建成员账号</Button>
-          <Button className={style.top_div_btn}>批量创建成员账号</Button>
+          <Button className={style.top_div_btn} onClick={() => setIsUploadMembersModal(true)}>批量创建成员账号</Button>
         </div>
       </div>
       <Table
@@ -209,28 +390,67 @@ export default function TeamManage() {
           </Form.Item>
         </Form>
       </Modal>
+      <Modal
+        title="批量创建成员账号"
+        open={isUploadMembersModal}
+        onCancel={handlecancelMember}
+        footer={null}
+        width={800}
+      >
+        <Image src={excelImg} width={500}></Image>
+        <div className={style.modalText}>提示1：上传excel表格第一行为列名，请严格按照列名填写学生信息</div>
+        <div className={style.modalText}>提示2：请上传xls格式文件</div>
+        <Upload
+            showUploadList={false}
+            beforeUpload={beforeUpload}
+            accept='.xls, .xlsx'
+            customRequest={() => { }}
+          >
+            <Button icon={<UploadOutlined />}>选择文件</Button>
+          </Upload>
+          <span className={style.fileName}>{excelFile?.name}</span>
+        <div className={style.uploadClick_box}>
+          <Button onClick={() => uploadfile()}>点击上传</Button>
+        </div>
+      </Modal>
       <Drawer
         title="组信息"
         placement="right"
-        onClose={() => setOpen(false)} open={open}
+        onClose={() => closeDrawer()} open={open}
         width='600px'
       >
-        <div>
+        <div className={style.drawer}>
           <div className={style.groupHead}>
             <div>
-              {
-                personInfo?.role === 2
-                  ? <Button size='small' style={{ marginRight: '5px' }}>切换</Button>
-                  : null
-              }
               {personInfo?.role ? renderRole(personInfo?.role) : null}{personInfo?.username} - {personInfo?.studentNo}
             </div>
             {
               personInfo?.role === 2
-                ? <div><Button size='small'>添加组员</Button></div>
+                ? <div>
+                  {
+                    !isOptionOpen
+                      ? <Button size='small' onClick={() => clickAddMemberBtn()}>添加组员</Button>
+                      : <Button size='small' onClick={() => { setIsOptionOpen(false); setMemberStudentNos([]) }}>取消添加组员</Button>
+                  }</div>
                 : null
             }
           </div>
+          {
+            isOptionOpen
+              ? <div className={style.selectOption}>
+                <Select
+                  mode="multiple"
+                  allowClear
+                  style={{ width: '90%' }}
+                  placeholder="选择需要添加的组员"
+                  onChange={handleChangeOption}
+                  value={memberStudentNos}
+                  options={noGroupMembersOption}
+                />
+                <Button size='small' onClick={() => addMembersBtn()}>确定</Button>
+              </div>
+              : null
+          }
           <div className={style.groupInfo}>
             {
               groupLists?.leader_infos
@@ -240,22 +460,68 @@ export default function TeamManage() {
                     {
                       groupLists?.leader_infos ? groupLists.leader_infos.username : ''
                     }
+                    {
+                      (Array.isArray(groupLists.member_infos) && groupLists.member_infos.length !== 0)
+                        ? <>
+                          {
+                            !isClickChangeBtn
+                              ? <Button size='small' style={{ marginLeft: '10px' }} onClick={() => setIsClickChangeBtn(true)}>组内切换组长</Button>
+                              : <>
+                                <Button size='small' style={{ marginLeft: '10px' }} onClick={() => setIsClickChangeBtn(false)}>取消</Button>
+                                <Select
+                                  allowClear
+                                  size='small'
+                                  style={{ width: '30%', marginLeft: '5px' }}
+                                  placeholder="选择组员"
+                                  onChange={handleChangeMember}
+                                  options={membersOption}
+                                />
+                                <Button size='small' onClick={() => updateLeader()}>确定</Button>
+                              </>
+                          }
+                        </>
+                        : null
+                    }
                   </div>
                   <div className={style.memberBox}>
-                    <Tag color='blue'>组员</Tag>
+                    <Tag color='blue' className={style.tag}>组员</Tag>
                     <div className={style.memberlist}>
                       {
                         !groupLists?.member_infos || (Array.isArray(groupLists.member_infos) && groupLists.member_infos.length === 0)
                           ? '暂无组员'
-                          : groupLists.member_infos.map(user => <span key={user.student_no}>{user.username}</span>)
+                          : groupLists.member_infos.map(user =>
+                            <Popconfirm
+                              key={user.student_no}
+                              onConfirm={() => deleteMember(user.student_no)}
+                              title='你确定要将该组员从组内移除吗？'
+                              okText="确定"
+                              cancelText="取消"
+                            >
+                              <a>{user.username}</a>
+                            </Popconfirm>
+                          )
                       }
                     </div>
                   </div>
                 </>
                 : <div className={style.noGroup}>
                   <span>该组员暂未加入任何组</span>
-                  <Button onClick={() => setLeader()}>为该组员成立小组</Button>
+                  <Button onClick={() => setLeader()}>将该组员设置为组长</Button>
                 </div>
+            }
+          </div>
+          <div className={style.bottom}>
+            {
+              personInfo?.role === 2
+                ? <Popconfirm
+                  title='确认要解散该组吗？解散后该组成员也会被解散'
+                  onConfirm={() => deleteTeam()}
+                  okText="确定"
+                  cancelText="取消"
+                >
+                  <a style={{ marginLeft: '5px' }}>解散该组</a>
+                </Popconfirm>
+                : null
             }
           </div>
         </div>

@@ -9,6 +9,7 @@ import { type ITabBarCommon } from './libs/model'
 import { StoreProvider } from './hooks/store'
 import Register from './pages/Register'
 import TeamManage from './pages/ManagerMain/TeamManage'
+import GroupManage from './pages/LeaderMain/GroupManage'
 
 function App() {
   const [tabBarList, setTabBarList] = useState<ITabBarCommon[]>([])
@@ -29,6 +30,7 @@ function App() {
           </Route>
           <Route path='leader' element={<Home />}>
             <Route path='personInfo' element={<MInfo />}></Route>
+            <Route path='groupManage' element={<GroupManage/>}></Route>
             <Route path='device' element={<Device />}></Route>
           </Route>
           <Route path='manager' element={<Home />}>

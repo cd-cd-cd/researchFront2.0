@@ -13,7 +13,8 @@ export const memberFunc: ITabBarCommon[] = [
 
 export const leaderFunc: ITabBarCommon[] = [
   { label: '个人信息', value: 0, name: 'personInfo' },
-  { label: '成员管理', value: 1, name: 'device' }
+  { label: '组员管理', value: 1, name: 'groupManage' },
+  { label: '成员管理', value: 2, name: 'device' }
   // { label: '设备管理', value: 2, name: 'TDeviceManager' },
   // { label: '组会管理', value: 3, name: 'groupManage' },
   // { label: '周报管理', value: 4, name: 'TWeekReport' },

@@ -81,11 +81,16 @@ interface IPagination {
   size: number
   total: number
 }
-export interface IUserBasic {
+export interface IMember {
   student_no: string
   username: string
 }
+
+export interface ILeader {
+  studentNo: string
+  username: string
+}
 export interface ITeamInfoLists {
-  member_infos: IUserBasic[]
-  leader_infos: IUserBasic
+  member_infos: IMember[]
+  leader_infos: ILeader
 }
