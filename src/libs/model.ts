@@ -94,3 +94,24 @@ export interface ITeamInfoLists {
   member_infos: IMember[]
   leader_infos: ILeader
 }
+interface ICommingUser {
+  studentNo: string
+  password: string
+  username: string
+  failReason: null | string
+}
+export interface IResUploadExcel {
+  corrcetCnt: number
+  totalCnt: number
+  wrongCnt: number
+  correctUsers: ICommingUser[]
+  wrongUsers: ICommingUser[]
+}
+
+export interface IFileTableSource {
+  key: string
+  studentNo: string
+  username: string
+  password: string
+  reason: string
+}

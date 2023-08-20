@@ -90,3 +90,25 @@
 .uploadClick_box {
   margin-top: 5px;
 }
+
+.height {
+  :global {
+    .ant-table-tbody>tr>td {
+      padding: 14px 14px;
+      text-align: center;
+    }
+
+    .ant-table-thead>tr>th {
+      padding: 10px;
+      text-align: center;
+    }
+  }
+}
+
+.file_box_btn{
+  padding: 0 100px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin-top: 10px;
+}

@@ -6,7 +6,7 @@ import Column from 'antd/lib/table/Column'
 import excelImg from '../../../assets/imgs/excelModal.png'
 import { UploadOutlined } from '@ant-design/icons'
 import { type IResGetPersonByStudentNo, createUser, delmember, getMember, getNoGroupMember, getPersonByStudentNo, getteaminfos, newGroup, updateleader, delteam, addMembers, uploadExcel } from '../../../api/Manager'
-import { type IRole, type IMembersTable, type IRange, type ITeamInfoLists } from '../../../libs/model'
+import { type IRole, type IMembersTable, type IRange, type ITeamInfoLists, type IResUploadExcel, type IFileTableSource } from '../../../libs/model'
 import dayjs from 'dayjs'
 import { type RcFile } from 'antd/lib/upload'
 
@@ -43,6 +43,12 @@ export default function TeamManage() {
   const [isUploadMembersModal, setIsUploadMembersModal] = useState(false)
   // 存储excel文件
   const [excelFile, setExcelFile] = useState<RcFile>()
+  // 保存返回上传excel数据
+  const [responseData, setResponseData] = useState<IFileTableSource[]>()
+  // 保存excel res所有信息
+  const [allResponseData, setAllResponseData] = useState<IResUploadExcel>()
+  // response data loading
+  const [responseLoading, setResponseLoading] = useState(false)
   const [form] = useForm()
   const handleCancel = () => {
     setIsOptionOpen(false)
@@ -252,10 +258,12 @@ export default function TeamManage() {
     setOpen(false)
   }
 
-  // 管理上传excel modal
+  // 关闭上传excel modal
   const handlecancelMember = () => {
     setIsUploadMembersModal(false)
     setExcelFile(undefined)
+    setResponseData(undefined)
+    setResponseLoading(false)
   }
 
   // 检查excel
@@ -276,7 +284,31 @@ export default function TeamManage() {
       temp.append('file', excelFile)
       const res = await uploadExcel(temp)
       if (res?.code === 200) {
-        console.log(res)
+        setResponseLoading(true)
+        setAllResponseData(res.data)
+        const temp1: IFileTableSource[] = res.data.correctUsers.reduce((pre: IFileTableSource[], cur) => {
+          pre.push({
+            key: cur.studentNo,
+            studentNo: cur.studentNo,
+            username: cur.username,
+            password: cur.password,
+            reason: cur.failReason ? cur.failReason : '√'
+          })
+          return pre
+        }, [])
+        const temp2: IFileTableSource[] = res.data.wrongUsers.reduce((pre: IFileTableSource[], cur) => {
+          pre.push({
+            key: cur.studentNo,
+            studentNo: cur.studentNo,
+            username: cur.username,
+            password: cur.password,
+            reason: cur.failReason ? cur.failReason : '√'
+          })
+          return pre
+        }, [])
+        temp1.concat(temp2)
+        setResponseData(temp1)
+        setResponseLoading(false)
       } else {
         message.info(res?.message)
       }
@@ -401,16 +433,43 @@ export default function TeamManage() {
         <div className={style.modalText}>提示1：上传excel表格第一行为列名，请严格按照列名填写学生信息</div>
         <div className={style.modalText}>提示2：请上传xls格式文件</div>
         <Upload
-            showUploadList={false}
-            beforeUpload={beforeUpload}
-            accept='.xls, .xlsx'
-            customRequest={() => { }}
-          >
-            <Button icon={<UploadOutlined />}>选择文件</Button>
-          </Upload>
-          <span className={style.fileName}>{excelFile?.name}</span>
+          showUploadList={false}
+          beforeUpload={beforeUpload}
+          accept='.xls, .xlsx'
+          customRequest={() => { }}
+        >
+          <Button icon={<UploadOutlined />}>选择文件</Button>
+        </Upload>
+        <span className={style.fileName}>{excelFile?.name}</span>
         <div className={style.uploadClick_box}>
           <Button onClick={() => uploadfile()}>点击上传</Button>
+        </div>
+        <div className={style.height}>
+          {
+            responseData
+              ? <>
+              <Table
+                loading={responseLoading}
+                dataSource={responseData}
+                pagination={false}
+              >
+                <Column title="学号" dataIndex="studentNo" key="studentNo" />
+                <Column title="姓名" dataIndex="username" key="username" />
+                <Column title="密码" dataIndex="password" key="password" />
+                <Column title="备注" dataIndex="reason" key="reason"></Column>
+              </Table>
+              <div>
+          <div className={style.fileName}>成功解析<strong>{allResponseData?.corrcetCnt}</strong>个账户</div>
+          <div className={style.fileName}><strong>{allResponseData?.wrongCnt}</strong>位账户无法创建</div>
+        </div>
+        <div className={style.file_box_btn}>
+          <Button type="primary" htmlType="submit">
+            确认添加上列账户
+          </Button>
+        </div>
+              </>
+              : null
+          }
         </div>
       </Modal>
       <Drawer

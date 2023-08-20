@@ -1,4 +1,4 @@
-import { type IRange, type IManagerRole, type IResGetMember, type ITeamInfoLists, type IRole } from "../../libs/model"
+import { type IRange, type IManagerRole, type IResGetMember, type ITeamInfoLists, type IRole, type IResUploadExcel } from "../../libs/model"
 import request from "../../utils/request"
 
 // 管理员注册
@@ -184,11 +184,20 @@ export const addMembers = async (leaderStudentNo: string, memberStudentNos: stri
 
 // 管理员上传excel表格
 export const uploadExcel = async (excelFile: FormData) => {
-  return await request({
+  return await request<IResUploadExcel>({
     url: '/v1/user/account/excelregister/',
     method: 'POST',
     headers: { 'Content-Type': 'multipart/form-data' },
     data: excelFile
   }
   )
+}
+
+// 批量生成账户
+export const createMembers = async () => {
+  return await request({
+    url: '',
+    method: 'POST',
+    data: {}
+  })
 }
