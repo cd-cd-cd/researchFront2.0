@@ -192,12 +192,37 @@ export const uploadExcel = async (excelFile: FormData) => {
   }
   )
 }
-
+export interface ICreateUser {
+  studentNo: string
+  password: string
+  username: string
+}
 // 批量生成账户
-export const createMembers = async () => {
+export const createMembers = async (users: ICreateUser[]) => {
   return await request({
-    url: '',
+    url: '/v1/user/account/registermore/',
     method: 'POST',
-    data: {}
+    data: users
+  })
+}
+
+export interface ITeam {
+  createTime: string
+  description: string
+  performance: string
+  task: string
+  teamname: string
+  updateTime: string
+  id: string
+}
+
+// 得到某组组介绍
+export const getTeam = async (studentNo: string) => {
+  return await request<ITeam>({
+    url: '/v1/team/info/getinfos/',
+    method: 'GET',
+    params: {
+      studentNo
+    }
   })
 }

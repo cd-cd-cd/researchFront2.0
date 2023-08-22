@@ -4,11 +4,37 @@ import style from './index.module.scss'
 import { useForm } from 'antd/lib/form/Form'
 import Column from 'antd/lib/table/Column'
 import excelImg from '../../../assets/imgs/excelModal.png'
-import { UploadOutlined } from '@ant-design/icons'
-import { type IResGetPersonByStudentNo, createUser, delmember, getMember, getNoGroupMember, getPersonByStudentNo, getteaminfos, newGroup, updateleader, delteam, addMembers, uploadExcel } from '../../../api/Manager'
-import { type IRole, type IMembersTable, type IRange, type ITeamInfoLists, type IResUploadExcel, type IFileTableSource } from '../../../libs/model'
+import { UploadOutlined, CheckCircleTwoTone } from '@ant-design/icons'
+
+import {
+  type IResGetPersonByStudentNo,
+  createUser,
+  delmember,
+  getMember,
+  getNoGroupMember,
+  getPersonByStudentNo,
+  getteaminfos,
+  newGroup,
+  updateleader,
+  delteam,
+  addMembers,
+  uploadExcel,
+  type ICreateUser,
+  createMembers,
+  getTeam,
+  type ITeam
+} from '../../../api/Manager'
+import {
+  type IRole,
+  type IMembersTable,
+  type IRange,
+  type ITeamInfoLists,
+  type IResUploadExcel,
+  type IFileTableSource
+} from '../../../libs/model'
 import dayjs from 'dayjs'
 import { type RcFile } from 'antd/lib/upload'
+import { info } from 'console'
 
 interface IOption {
   label: string
@@ -44,11 +70,15 @@ export default function TeamManage() {
   // 存储excel文件
   const [excelFile, setExcelFile] = useState<RcFile>()
   // 保存返回上传excel数据
-  const [responseData, setResponseData] = useState<IFileTableSource[]>()
+  const [responseData, setResponseData] = useState<IFileTableSource[]>([])
+  // 保存错误的
+  const [responseWrongData, setResponseWrongData] = useState<IFileTableSource[]>([])
   // 保存excel res所有信息
   const [allResponseData, setAllResponseData] = useState<IResUploadExcel>()
   // response data loading
   const [responseLoading, setResponseLoading] = useState(false)
+  // 保存组介绍
+  const [teamInfo, setTeamInfo] = useState<ITeam>()
   const [form] = useForm()
   const handleCancel = () => {
     setIsOptionOpen(false)
@@ -113,6 +143,15 @@ export default function TeamManage() {
       setCurrent(pageNum)
     }
   }
+  // 查看组信息
+  const getTeamInfo = async (studentNo: string) => {
+    const res = await getTeam(studentNo)
+    if (res?.code === 200) {
+      setTeamInfo(res.data)
+    } else {
+      message.info(res?.message)
+    }
+  }
 
   // 根据抽屉人信息 得到组长组员信息
   const getLeaderMembers = async (studentNo: string) => {
@@ -132,6 +171,9 @@ export default function TeamManage() {
   const viewGroupInfo = async (memberInfo: IMembersTable) => {
     getPersonInfo(memberInfo.studentNo)
     getLeaderMembers(memberInfo.studentNo)
+    if (memberInfo.role === 2) {
+      getTeamInfo(memberInfo.studentNo)
+    }
     setOpen(true)
   }
 
@@ -262,7 +304,8 @@ export default function TeamManage() {
   const handlecancelMember = () => {
     setIsUploadMembersModal(false)
     setExcelFile(undefined)
-    setResponseData(undefined)
+    setResponseData([])
+    setResponseWrongData([])
     setResponseLoading(false)
   }
 
@@ -306,14 +349,46 @@ export default function TeamManage() {
           })
           return pre
         }, [])
-        temp1.concat(temp2)
         setResponseData(temp1)
+        setResponseWrongData(temp2)
         setResponseLoading(false)
       } else {
         message.info(res?.message)
       }
     } else {
       message.info('还未选择文件!')
+    }
+  }
+
+  // 批量添加操作
+  const addManyMembers = async () => {
+    if (responseData.length) {
+      const temp: ICreateUser[] = responseData.reduce((pre: ICreateUser[], cur) => {
+        pre.push({
+          studentNo: cur.studentNo,
+          password: cur.password,
+          username: cur.username
+        })
+        return pre
+      }, [])
+      const res = await createMembers(temp)
+      if (res?.code === 200) {
+        handlecancelMember()
+        getList(range as IRange)
+        message.success('添加成功')
+      } else {
+        message.info(res?.message)
+      }
+    } else {
+      message.info('没有账号可以创建, 请修改文件再上传')
+    }
+  }
+
+  const renderReason = (value: string) => {
+    if (value === '√') {
+      return <CheckCircleTwoTone twoToneColor="#52c41a" />
+    } else {
+      return <span className={style.text}>{value}</span>
     }
   }
   useEffect(() => {
@@ -356,26 +431,31 @@ export default function TeamManage() {
           <Button className={style.top_div_btn} onClick={() => setIsUploadMembersModal(true)}>批量创建成员账号</Button>
         </div>
       </div>
-      <Table
-        loading={loading}
-        dataSource={members}
-        pagination={paginationProps}
-      >
-        <Column title="姓名" dataIndex="username" key="username" />
-        <Column title="学号" dataIndex="studentNo" key="studentNo" />
-        <Column
-          title="角色"
-          dataIndex="role"
-          key="role"
-          render={(role: IRole, _: any) => renderRole(role)}
-        />
-        <Column title="邮箱" dataIndex="email" key="email" />
-        <Column title="手机号" dataIndex="phone" key="phone" />
-        <Column title="组信息" dataIndex="groupInfo" key="groupInfo"
-          render={(_, record: IMembersTable) => <a onClick={() => viewGroupInfo(record)}>查看</a>}
-        ></Column>
-        <Column title="创建时间" dataIndex="createTime" key="createTime" />
-      </Table>
+      <div className={style.height2}>
+        <Table
+          loading={loading}
+          dataSource={members}
+          pagination={paginationProps}
+        >
+          <Column title="头像" dataIndex="photo" key="photo"
+            render={(value: string) => <><Image src={value} width={55}></Image></>}
+          />
+          <Column title="姓名" dataIndex="username" key="username" />
+          <Column title="学号" dataIndex="studentNo" key="studentNo" />
+          <Column
+            title="角色"
+            dataIndex="role"
+            key="role"
+            render={(role: IRole, _: any) => renderRole(role)}
+          />
+          <Column title="邮箱" dataIndex="email" key="email" />
+          <Column title="手机号" dataIndex="phone" key="phone" />
+          <Column title="组信息" dataIndex="groupInfo" key="groupInfo"
+            render={(_, record: IMembersTable) => <a onClick={() => viewGroupInfo(record)}>查看</a>}
+          ></Column>
+          <Column title="创建时间" dataIndex="createTime" key="createTime" />
+        </Table>
+      </div>
       <Modal
         title="添加成员"
         open={isModalOpen}
@@ -446,27 +526,29 @@ export default function TeamManage() {
         </div>
         <div className={style.height}>
           {
-            responseData
+            responseData.length || responseWrongData.length
               ? <>
-              <Table
-                loading={responseLoading}
-                dataSource={responseData}
-                pagination={false}
-              >
-                <Column title="学号" dataIndex="studentNo" key="studentNo" />
-                <Column title="姓名" dataIndex="username" key="username" />
-                <Column title="密码" dataIndex="password" key="password" />
-                <Column title="备注" dataIndex="reason" key="reason"></Column>
-              </Table>
-              <div>
-          <div className={style.fileName}>成功解析<strong>{allResponseData?.corrcetCnt}</strong>个账户</div>
-          <div className={style.fileName}><strong>{allResponseData?.wrongCnt}</strong>位账户无法创建</div>
-        </div>
-        <div className={style.file_box_btn}>
-          <Button type="primary" htmlType="submit">
-            确认添加上列账户
-          </Button>
-        </div>
+                <Table
+                  loading={responseLoading}
+                  dataSource={[...responseData, ...responseWrongData]}
+                  pagination={false}
+                >
+                  <Column title="学号" dataIndex="studentNo" key="studentNo" />
+                  <Column title="姓名" dataIndex="username" key="username" />
+                  <Column title="初始密码" dataIndex="password" key="password" />
+                  <Column title="备注" dataIndex="reason" key="reason"
+                    render={(value: string) => renderReason(value)}
+                  ></Column>
+                </Table>
+                <div>
+                  <div className={style.fileName}>成功解析<strong>{allResponseData?.corrcetCnt}</strong>个账户</div>
+                  <div className={style.text}><strong>{allResponseData?.wrongCnt}</strong>位账户无法创建</div>
+                </div>
+                <div className={style.file_box_btn}>
+                  <Button type="primary" htmlType="submit" onClick={() => addManyMembers()}>
+                    确认添加上列账户
+                  </Button>
+                </div>
               </>
               : null
           }
@@ -475,7 +557,8 @@ export default function TeamManage() {
       <Drawer
         title="组信息"
         placement="right"
-        onClose={() => closeDrawer()} open={open}
+        onClose={() => closeDrawer()}
+        open={open}
         width='600px'
       >
         <div className={style.drawer}>
@@ -569,6 +652,28 @@ export default function TeamManage() {
                 </div>
             }
           </div>
+          {
+            personInfo?.role === 2
+              ? <div className={style.groupInfo}>
+                <div className={style.row}>
+                  <div className={style.label}>组名:</div>
+                  <div>{teamInfo?.teamname ? teamInfo.teamname : '暂无'}</div>
+                </div>
+                <div className={style.row}>
+                  <div className={style.label}>小组任务:</div>
+                  <div>{teamInfo?.task ? teamInfo.task : '暂无'}</div>
+                </div>
+                <div className={style.row}>
+                  <div className={style.label}>小组成绩:</div>
+                  <div>{teamInfo?.performance ? teamInfo.performance : '暂无'}</div>
+                </div>
+                <div className={style.row}>
+                  <div className={style.label}>小组简介:</div>
+                  <div>{teamInfo?.description ? teamInfo.description : '暂无'}</div>
+                </div>
+              </div>
+              : null
+          }
           <div className={style.bottom}>
             {
               personInfo?.role === 2
