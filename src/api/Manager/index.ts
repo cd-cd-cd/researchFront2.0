@@ -1,5 +1,6 @@
-import { type IRange, type IManagerRole, type IResGetMember, type ITeamInfoLists, type IRole, type IResUploadExcel } from "../../libs/model"
+import { type IRange, type IManagerRole, type IResGetMember, type ITeamInfoLists, type IRole, type IResUploadExcel, type IEquipmentState, type IResDeviceExcel, type IDeviceEquipment, type IDeviceApply } from "../../libs/model"
 import request from "../../utils/request"
+import { type ICheckUserInfo } from "../Member"
 
 // 管理员注册
 export const managerRegister = async (studentNo: string, password: string, role = 1) => {
@@ -223,6 +224,194 @@ export const getTeam = async (studentNo: string) => {
     method: 'GET',
     params: {
       studentNo
+    }
+  })
+}
+
+// 管理员……组长添加设备
+export const addDevice = async (
+  serialNumber: string,
+  name: string,
+  version: string,
+  originalValue: string,
+  performanceIndex: string,
+  address: string,
+  warehouseEntryTime: string,
+  hostRemarks: string,
+  remark: string
+) => {
+  return await request({
+    url: '/v1/equipment/management/addequipment/',
+    method: 'POST',
+    data: {
+      serialNumber,
+      name,
+      version,
+      originalValue,
+      performanceIndex,
+      address,
+      warehouseEntryTime,
+      remark,
+      hostRemarks
+    }
+  })
+}
+
+export interface IRecipient {
+  studentNo: string
+  username: string
+}
+
+export interface IEquipment {
+  id: string
+  serialNumber: string
+  name: string
+  version: string
+  originalValue: string
+  performanceIndex: string
+  address: string
+  warehouseEntryTime: string
+  remark: string
+  hostRemarks: string
+  formerRecipient: IRecipient | null
+  recipient: IRecipient | null
+  status: IEquipmentState
+  applyNumber: number
+}
+
+export interface IGetDeviceInfos {
+  total: number
+  equipments: IEquipment[]
+}
+
+// 得到设备信息
+export const getDeviceInfos = async (
+  pageNum: number,
+  pageSize: number
+) => {
+  return await request<IGetDeviceInfos>({
+    url: '/v1/equipment/management/getteamequipments/',
+    method: 'GET',
+    params: {
+      pageNum,
+      pageSize
+    }
+  })
+}
+
+// 修改设备信息
+export const modifyDevice = async (
+  id: string,
+  serialNumber: string,
+  name: string,
+  version: string,
+  originalValue: string,
+  performanceIndex: string,
+  address: string,
+  warehouseEntryTime: string,
+  remark: string,
+  hostRemarks: string
+) => {
+  return await request({
+    url: '/v1/equipment/management/updateequipment/',
+    method: 'POST',
+    data: {
+      id,
+      serialNumber,
+      name,
+      version,
+      originalValue,
+      performanceIndex,
+      address,
+      warehouseEntryTime,
+      remark,
+      hostRemarks
+    }
+  })
+}
+
+// excel批量导入
+export const addequipmentexcel = async (excelFile: FormData) => {
+  return await request<IResDeviceExcel>({
+    url: '/v1/equipment/management/addequipmentexcel/',
+    method: 'POST',
+    headers: { 'Content-Type': 'multipart/form-data' },
+    data: excelFile
+  })
+}
+
+export const confirmAddExcel = async (lists: IDeviceEquipment[]) => {
+  return await request({
+    url: '/v1/equipment/management/addequipmentmore/',
+    method: 'POST',
+    data: lists
+  })
+}
+
+// 管理员直接使用设备
+export const managerUseDevice = async (
+  equipmentId: string,
+  deadlineTime: string,
+  applyReason = null
+) => {
+  return await request({
+    url: '/v1/equipment/record/addapplyrecord/',
+    method: 'POST',
+    data: {
+      equipmentId,
+      deadlineTime,
+      applyReason
+    }
+  })
+}
+
+export interface IResGetDeviceRecord {
+  applyReason: string
+  applyTime: string
+  checkUserInfo: ICheckUserInfo
+  applyUserInfo: ICheckUserInfo
+  deadlineTime: string
+  refuseReason: string
+  status: IDeviceApply
+  equipmentInfo: IEquipment
+  id: string
+}
+
+// 获得设备申请信息
+export const getequipmentrecord = async (equipmentid: string) => {
+  return await request<IResGetDeviceRecord[]>({
+    url: '/v1/equipment/record/getequipmentrecord/',
+    method: 'GET',
+    params: {
+      equipmentid
+    }
+  })
+}
+
+// 对设备进行审批
+export const checkrecord = async (
+  applyid: string,
+  status: 'pass' | 'refuse',
+  reason: string | null | undefined
+) => {
+  return await request({
+    url: '/v1/equipment/record/checkrecord/',
+    method: 'POST',
+    params: {
+      applyid,
+      status,
+      reason
+    }
+  })
+}
+
+// 提前收回某设备
+export const recoverapplyrecord = async (equipemntid: string) => {
+  return await request({
+    url: '/v1/equipment/record/recoverapplyrecord/',
+    method: 'POST',
+    params: {
+      equipemntid
     }
   })
 }

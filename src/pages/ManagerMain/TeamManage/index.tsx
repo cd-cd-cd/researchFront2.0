@@ -5,7 +5,6 @@ import { useForm } from 'antd/lib/form/Form'
 import Column from 'antd/lib/table/Column'
 import excelImg from '../../../assets/imgs/excelModal.png'
 import { UploadOutlined, CheckCircleTwoTone } from '@ant-design/icons'
-
 import {
   type IResGetPersonByStudentNo,
   createUser,
@@ -34,7 +33,6 @@ import {
 } from '../../../libs/model'
 import dayjs from 'dayjs'
 import { type RcFile } from 'antd/lib/upload'
-import { info } from 'console'
 
 interface IOption {
   label: string
@@ -245,7 +243,6 @@ export default function TeamManage() {
 
   // 点击管理员切换组长确定按钮
   const updateLeader = async () => {
-    console.log('leaderInfo', groupLists?.leader_infos.studentNo)
     if (changeMember && groupLists?.leader_infos.studentNo) {
       const res = await updateleader(groupLists?.leader_infos.studentNo, changeMember)
       if (res?.code === 200) {

@@ -1,0 +1,101 @@
+.main {
+  position: relative;
+  padding: 10px 40px;
+  margin-top: 10px;
+  margin-left: 80px;
+  width: 1000px;
+  box-shadow: 0 0 10px 0 rgb(58 58 58 / 7%);
+  margin-bottom: 30px;
+}
+
+.reset_btn{
+  position: absolute;
+  top: 20px;
+  left: 20px;
+}
+
+.title {
+  color: rgba(8, 14, 23, 0.9);
+  font-size: 28px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.date {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.headOneNoClick {
+  display: inline-block;
+  margin: 10px 0 10px 0;
+  color: gray;
+  font-size: 22px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.noClick{
+  display: inline-block;
+  margin: 10px 0 10px 0;
+  color: rgba(8, 14, 23, 0.9);
+  font-size: 22px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.headOne {
+  margin: 10px 0 10px 0;
+  color: rgba(8, 14, 23, 0.9);
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.timeLine{
+  display: flex;
+  align-items: center;
+  margin: 5px 0;
+
+  .inputNumber{
+    width: 300px;
+  }
+
+  .label{
+    margin-left: 5px;
+  }
+}
+
+.border{
+  box-shadow: 0 0 10px 0 rgb(58 58 58 / 7%);
+  padding: 25px;
+  position: relative;
+}
+
+.icon {
+  width: 15px;
+  height: 15px;
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  cursor: pointer;
+}
+
+.submit{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  margin-top: 10px;
+}
+// .AddIcon{
+//   width: 20px;
+//   height: 20px;
+//   display: inline-block;
+//   margin: 10px auto;
+//   cursor: pointer;
+// }
+
+// .AddIcon:hover {
+//   background-color: lightgray;
+// }

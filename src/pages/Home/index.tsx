@@ -139,7 +139,7 @@ export default function Home () {
         <aside className={style.aside}>
           <Menu
             onClick={onClick}
-            style={{ width: 230 }}
+            style={{ width: 200 }}
             selectedKeys={[tabBarId.toString()]}
             mode="vertical"
             theme="light"

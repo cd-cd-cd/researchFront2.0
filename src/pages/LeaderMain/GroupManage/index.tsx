@@ -37,7 +37,6 @@ export default function GroupManage() {
         })
         return pre
       }, []))
-      console.log(res.data)
     } else {
       message.info(res?.message)
     }
@@ -48,7 +47,6 @@ export default function GroupManage() {
     const res = await getTeamInfos()
     if (res?.code === 200) {
       setTeamInfo(res.data)
-      console.log(res.data)
     } else {
       message.info(res?.message)
     }

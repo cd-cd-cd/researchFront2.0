@@ -1,5 +1,6 @@
-import { type IManagerRole } from "../../libs/model"
+import { type IDeviceApply, type IManagerRole } from "../../libs/model"
 import request from "../../utils/request"
+import { type IEquipment } from "../Manager"
 
 // 成员初次登录得到个人信息
 export const getManagerInfo = async () => {
@@ -44,6 +45,59 @@ export const modifyPassWord = async (oldPassword: string, newPassword: string, c
       oldPassword,
       newPassword,
       confirmPassword
+    }
+  })
+}
+
+// 提交设备申请
+export const addApplyRecord = async (equipmentId: string, applyReason: string, deadlineTime: Date) => {
+  return await request({
+    url: '/v1/equipment/record/addapplyrecord/',
+    method: 'POST',
+    data: {
+      equipmentId,
+      applyReason,
+      deadlineTime
+    }
+  })
+}
+
+export interface ICheckUserInfo {
+  id: number
+  leaderNo: string
+  adminNo: string
+  username: string
+  studentNo: string
+  createTime: string
+}
+
+export interface IResGetApplyRecord {
+  applyReason: string
+  applyTime: string
+  checkUserInfo: ICheckUserInfo
+  deadlineTime: string
+  equipmentInfo: IEquipment
+  id: string
+  refuseReason: string
+  status: IDeviceApply
+  studentNo: string
+}
+
+// 申请设备
+export const getapplyrecord = async () => {
+  return await request<IResGetApplyRecord[]>({
+    url: '/v1/equipment/record/getapplyrecord/',
+    method: 'GET'
+  })
+}
+
+// 撤回审批
+export const cencelrecord = async (recordid: string) => {
+  return await request({
+    url: '/v1/equipment/record/cencelrecord/',
+    method: 'POST',
+    params: {
+      recordid
     }
   })
 }

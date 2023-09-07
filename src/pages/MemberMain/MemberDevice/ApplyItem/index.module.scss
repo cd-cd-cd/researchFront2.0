@@ -1,0 +1,34 @@
+.show_box{
+  padding: 15px;
+  width: 500px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 0 10px 0 rgb(58 58 58 / 7%);
+  transition: all 0.3s;
+  margin-bottom: 5px;
+}
+
+.colOneToFour {
+  margin: 3px 0;
+}
+
+.main_head{
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.show_box:hover {
+  box-shadow: 0 0 10px 0 #74bafb;
+}
+
+.label2{
+  color: gray;
+  margin-right: 5px;
+}
+
+.apply_btn{
+  margin-bottom: 10px;
+  width: 90px;
+}

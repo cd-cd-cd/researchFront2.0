@@ -26,7 +26,8 @@ module.exports = {
       "@typescript-eslint/naming-convention": "off",
       "@typescript-eslint/quotes": "off",
       "@typescript-eslint/no-var-requires": "off",
-      "@typescript-eslint/no-confusing-void-expression": "off"
+      "@typescript-eslint/no-confusing-void-expression": "off",
+      "@typescript-eslint/dot-notation": "off"
     },
     "parserOptions": {
       "ecmaVersion": "latest",

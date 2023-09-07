@@ -2,35 +2,201 @@ import { type IOption, type ITabBarCommon } from './model'
 
 export const memberFunc: ITabBarCommon[] = [
   { label: '个人信息', value: 0, name: 'personInfo' },
-  { label: '设备管理', value: 1, name: 'device' }
-  // { label: '组会管理', value: 2, name: 'groupManage' },
-  // { label: '周报管理', value: 3, name: 'weekReport' },
-  // // { label: '经费报销', value: 4, name: 'reimbursement' },
-  // { label: '请假管理', value: 4, name: 'leaveRequest' },
-  // { label: '成果管理', value: 5, name: 'production' },
-  // { label: '项目管理', value: 6, name: 'project' }
+  { label: '设备管理', value: 1, name: 'MemberDevice' },
+  { label: '上传周报', value: 2, name: 'MemberWeekReport' }
 ]
 
 export const leaderFunc: ITabBarCommon[] = [
   { label: '个人信息', value: 0, name: 'personInfo' },
   { label: '组员管理', value: 1, name: 'groupManage' },
-  { label: '成员管理', value: 2, name: 'device' }
-  // { label: '设备管理', value: 2, name: 'TDeviceManager' },
-  // { label: '组会管理', value: 3, name: 'groupManage' },
-  // { label: '周报管理', value: 4, name: 'TWeekReport' },
-  // { label: '经费报销', value: 5, name: 'TReimbursement' },
-  // { label: '请假管理', value: 5, name: 'TLeaveRequest' },
-  // { label: '成果管理', value: 6, name: 'TProduction' },
-  // { label: '项目管理', value: 7, name: 'TProject' },
-  // { label: '数据管理', value: 8, name: 'TDataManage' }
+  { label: '设备管理', value: 2, name: 'LDevice' }
 ]
 
 export const managerFunc: ITabBarCommon[] = [
   { label: '个人信息', value: 0, name: 'MInfo' },
-  { label: '成员管理', value: 1, name: 'TeamManage' }
-  // { label: '用户管理', value: 1, name: 'userControl' }
-  // { label: '经费报销', value: 2, name: 'MReimbursement' }
-  // { label: '数据管理', value: 3, name: 'MDataManage' }
+  { label: '成员管理', value: 1, name: 'TeamManage' },
+  { label: '设备管理', value: 2, name: 'MDevice' }
+]
+
+export const treeData = [
+  {
+    value: '1',
+    title: '项目服务',
+    disabled: true,
+    children: [
+      {
+        value: '1-1',
+        title: '纵向',
+        disabled: true,
+        children: [
+          {
+            value: '1-1-1',
+            title: '项目申请（申请材料撰写，答辩ppt制作等和项目申请相关的工作）',
+            disabled: false
+          },
+          {
+            value: '1-1-2',
+            title: '项目运营（项目的研发，各单位协调，中期审核，项目出差等）',
+            disabled: false
+          },
+          {
+            value: '1-1-3',
+            title: '项目结题 （项目结题答辩，项目结题材料撰写等）',
+            disabled: false
+          }
+        ]
+      },
+      {
+        value: '1-2',
+        title: '横向',
+        disabled: true,
+        children: [
+          {
+            value: '1-2-1',
+            disabled: false,
+            title: '项目申请（合同，标书等申请材料撰写）'
+          },
+          {
+            value: '1-2-2',
+            disabled: false,
+            title: '项目执行 （项目期间的数据采集，技术研发，项目出差，和甲方沟通等）'
+          },
+          {
+            value: '1-2-3',
+            disabled: false,
+            title: '项目验收 （验收材料撰写，技术验收等）'
+          }
+        ]
+      },
+      {
+        value: '1-3',
+        title: '成果产出',
+        disabled: true,
+        children: [
+          {
+            value: '1-3-1',
+            disabled: false,
+            title: '奖项申请（国家级或省部级奖项的申请工作）'
+          },
+          {
+            value: '1-3-2',
+            disabled: false,
+            title: '知识产权（软著，专利等材料撰写）'
+          }
+        ]
+      }
+    ]
+  },
+  {
+    value: '2',
+    title: '课程教学',
+    disabled: true,
+    children: [
+      {
+        value: '2-1',
+        disabled: false,
+        title: '助教（协助完成课程管理，课程流程设计，组织考试，学生答疑，作业批改等课程日常工作）'
+      },
+      {
+        value: '2-2',
+        disabled: false,
+        title: '其他（教学成果产出，书籍撰写，课程调研等）'
+      }
+    ]
+  },
+  {
+    value: '3',
+    title: '设备服务',
+    disabled: true,
+    children: [
+      {
+        value: '3-1',
+        title: '大型设备采购',
+        disabled: true,
+        children: [
+          {
+            value: '3-1-1',
+            disabled: false,
+            title: '招投标（采购调研，招投标，可行性分析等学校采购流程材料撰写，采购手续，合同签订等）'
+          },
+          {
+            value: '3-1-2',
+            disabled: false,
+            title: '财务流程（外贸免税材料，财务支付，各类凭证票据管理）'
+          },
+          {
+            value: '3-1-3',
+            disabled: false,
+            title: '设备验收（贵重物品验收报告等，学校财产验收流程）'
+          }
+        ]
+      },
+      {
+        value: '3-2',
+        disabled: false,
+        title: '设备维护(常规维护，设备管理，集体设备维修，比如十卡，无人车等)'
+      }
+    ]
+  },
+  {
+    value: '4',
+    title: '涉密服务',
+    disabled: true,
+    children: [
+      {
+        value: '4-1',
+        disabled: false,
+        title: '保密检查（协调组织团队应对学校或北京市的保密检查等相关事务）'
+      },
+      {
+        value: '4-2',
+        disabled: false,
+        title: '涉密手续（跑学校的保密手续，涉密任务，涉密涉密材料撰写，团队的日常涉密任务等诸多涉密相关任务）'
+      },
+      {
+        value: '4-3',
+        disabled: false,
+        title: '涉密项目（具体细则遵循项目服务，包括项目申请，项目中期，项目结题等）'
+      }
+    ]
+  },
+  {
+    value: '5',
+    title: '科研服务',
+    disabled: true,
+    children: [
+      {
+        value: '5-1',
+        disabled: false,
+        title: '团队信息维护（团队网站维护，paper_reading等学习资料的维护）'
+      },
+      {
+        value: '5-2',
+        disabled: false,
+        title: '数据集采集（团队的数据集标注，数据集采集等）'
+      },
+      {
+        value: '5-3',
+        disabled: false,
+        title: '团队宣传与招生（夏令营宣讲，代表团队进行学术报告，宣传新闻稿撰写，宣传海报制作，宣传视频设计，招生面试等）'
+      },
+      {
+        value: '5-4',
+        disabled: false,
+        title: '团队集群管理（服务器的定期数据清理，协调服务器的正常使用）'
+      },
+      {
+        value: '5-5',
+        disabled: false,
+        title: '其他（其他财务流程，独立于上述各点的材料书写，方案设计，科研小组组长）'
+      }
+    ]
+  },
+  {
+    value: '6',
+    disabled: false,
+    title: '其他此项包括任何独立于上述选项的额外的因团队占用大块时间的部分（比如所庆，承办大型会议，接待外校老师等）'
+  }
 ]
 
 export const StuModuleOption: IOption[] = [
