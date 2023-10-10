@@ -52,11 +52,12 @@ export default function Register() {
             <Form.Item
               name='username'
               rules={[
-                { required: true, message: '用户名不为空' },
-                { min: 6, message: '用户名不少于6位数' }
+                { required: true, message: '学工号不为空' },
+                { min: 6, message: '学工号不少于6位数' },
+                { pattern: /^[0-9]+.?[0-9]*/, message: '只能为数字' }
               ]}
             >
-              <Input placeholder='请输入用户名'>
+              <Input placeholder='请输入学工号'>
               </Input>
             </Form.Item>
             <Form.Item

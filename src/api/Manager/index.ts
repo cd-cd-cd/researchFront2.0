@@ -1,4 +1,4 @@
-import { type IRange, type IManagerRole, type IResGetMember, type ITeamInfoLists, type IRole, type IResUploadExcel, type IEquipmentState, type IResDeviceExcel, type IDeviceEquipment, type IDeviceApply } from "../../libs/model"
+import { type IRange, type IManagerRole, type IResGetMember, type ITeamInfoLists, type IRole, type IResUploadExcel, type IEquipmentState, type IResDeviceExcel, type IDeviceEquipment, type IDeviceApply, type IGetSomeBodyReporters, type IGetUserTeamWork, type IGetusertimes, type IGetusertimeteamwork } from "../../libs/model"
 import request from "../../utils/request"
 import { type ICheckUserInfo } from "../Member"
 
@@ -412,6 +412,192 @@ export const recoverapplyrecord = async (equipemntid: string) => {
     method: 'POST',
     params: {
       equipemntid
+    }
+  })
+}
+
+export interface IGetUsers {
+  notReadCnt: number
+  user: IUser
+}
+
+// 得到组内/团队内组员
+export const getUsers = async () => {
+  return await request<IGetUsers[]>({
+    url: '/v1/report/info/getuserinfos/',
+    method: 'GET'
+  })
+}
+
+// 获得该用户所有周报
+export const getSomeBodyReporters = async (
+  studentno: string,
+  pageNum: number,
+  pageSize: number
+) => {
+  return await request<IGetSomeBodyReporters>({
+    url: '/v1/report/management/getuserallreport/',
+    method: 'GET',
+    params: {
+      studentno,
+      pageNum,
+      pageSize
+    }
+  })
+}
+
+export interface ITime {
+  year: string
+  week: string
+}
+
+// 指定时间段获取该用户周报
+export const getusertimereport = async (
+  pageNum: number,
+  pageSize: number,
+  studentNo: string,
+  startTimeInfo: ITime,
+  endTimeInfo: ITime
+) => {
+  return await request<IGetSomeBodyReporters>({
+    url: '/v1/report/management/getusertimereport/',
+    method: 'POST',
+    params: {
+      pageNum,
+      pageSize
+    },
+    data: {
+      studentNo,
+      startTimeInfo,
+      endTimeInfo
+    }
+  })
+}
+
+// 获取该用户团队贡献情况
+export const getuserteamwork = async (
+  pageNum: number,
+  pageSize: number,
+  studentNo: string,
+  startTimeInfo: ITime,
+  endTimeInfo: ITime
+) => {
+  return await request<IGetUserTeamWork>({
+    url: '/v1/report/teamwork/getuserteamwork/',
+    method: 'POST',
+    params: {
+      pageNum,
+      pageSize
+    },
+    data: {
+      studentNo,
+      startTimeInfo,
+      endTimeInfo
+    }
+  })
+}
+
+// 根据 时间段 返回所属成员 （序号、姓名，学号，周报提交次数），提交次数少的靠前
+export const getusertimes = async (
+  pageNum: number,
+  pageSize: number,
+  startTimeInfo: ITime,
+  endTimeInfo: ITime
+) => {
+  return await request<IGetusertimes>({
+    url: '/v1/report/management/getusertimes/',
+    method: 'POST',
+    params: {
+      pageNum,
+      pageSize
+    },
+    data: {
+      startTimeInfo,
+      endTimeInfo
+    }
+  })
+}
+
+// 根据 时间段 返回成员团队贡献表（序号、姓名、学号、服务次数、服务总时长、服务内容（类型、标题、时长）按时间顺序，时间晚的靠前），服务总时长多的靠前
+export const getusertimeteamwork = async (
+  pageNum: number,
+  pageSize: number,
+  startTimeInfo: ITime,
+  endTimeInfo: ITime
+) => {
+  return await request<IGetusertimeteamwork>({
+    url: '/v1/report/teamwork/getusertimeteamwork/',
+    method: 'POST',
+    params: {
+      pageNum,
+      pageSize
+    },
+    data: {
+      startTimeInfo,
+      endTimeInfo
+    }
+  })
+}
+
+// 回复周报
+export const addreportcomment = async (reportId: string, content: string) => {
+  return await request({
+    url: '/v1/report/comment/addreportcomment/',
+    method: 'POST',
+    data: {
+      reportId,
+      content
+    }
+  })
+}
+
+export interface IUser {
+  adminNo: string
+  createTime: string
+  email: string
+  id: string
+  leaderNo: string
+  phone: string
+  photo: string
+  role: IRole
+  studentNo: string
+  updateTime: string
+  username: string
+}
+
+export interface IComment {
+  content: string
+  createTime: string
+  id: string
+  reportId: string
+  role: IRole
+  updateTime: string
+  userInfo: IUser
+  isMyself: 0 | 1
+}
+export interface IGetreportcomment {
+  leaderGroupComments: IComment[]
+  adminGroupComments: IComment[]
+}
+
+// 根据周报id，得到周报的所有回复，按照提交时间倒序
+export const getreportcomment = async (recordId: string) => {
+  return await request<IGetreportcomment>({
+    url: '/v1/report/comment/getreportcomment/',
+    method: 'GET',
+    params: {
+      recordId
+    }
+  })
+}
+
+// 根据回复id，删除某周报某回复（撤回）
+export const delreportcomment = async (commentId: string) => {
+  return await request({
+    url: '/v1/report/comment/delreportcomment/',
+    method: 'POST',
+    params: {
+      commentId
     }
   })
 }

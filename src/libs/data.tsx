@@ -3,19 +3,26 @@ import { type IOption, type ITabBarCommon } from './model'
 export const memberFunc: ITabBarCommon[] = [
   { label: '个人信息', value: 0, name: 'personInfo' },
   { label: '设备管理', value: 1, name: 'MemberDevice' },
-  { label: '上传周报', value: 2, name: 'MemberWeekReport' }
+  { label: '上传周报', value: 2, name: 'MemberWeekReport' },
+  { label: '历史周报', value: 3, name: 'MemberHistoryReport' }
 ]
 
 export const leaderFunc: ITabBarCommon[] = [
   { label: '个人信息', value: 0, name: 'personInfo' },
   { label: '组员管理', value: 1, name: 'groupManage' },
-  { label: '设备管理', value: 2, name: 'LDevice' }
+  { label: '设备管理', value: 2, name: 'LDevice' },
+  { label: '上传周报', value: 3, name: 'LeaderWeekReport' },
+  { label: '历史周报', value: 4, name: 'LeaderHistoryReport' },
+  { label: '某成员周报查询', value: 5, name: 'LSBReport' },
+  { label: '整体周报提交情况', value: 6, name: 'LAllReport' }
 ]
 
 export const managerFunc: ITabBarCommon[] = [
   { label: '个人信息', value: 0, name: 'MInfo' },
   { label: '成员管理', value: 1, name: 'TeamManage' },
-  { label: '设备管理', value: 2, name: 'MDevice' }
+  { label: '设备管理', value: 2, name: 'MDevice' },
+  { label: '某成员周报查询', value: 3, name: 'MSBReport' },
+  { label: '整体周报提交情况', value: 4, name: 'MAllReport' }
 ]
 
 export const treeData = [

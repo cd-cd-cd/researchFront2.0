@@ -547,7 +547,7 @@ export default function LDevice() {
       >
         <Image src={excelImg} width={900}></Image>
         <div className={style.modalText}>提示1：上传excel表格第一行为列名，请严格按照列名填写设备信息</div>
-        <div className={style.modalText}>提示2：请上传xls格式文件</div>
+        <div className={style.modalText}>提示2：请上传xls或xlsx格式文件</div>
         <Upload
           showUploadList={false}
           beforeUpload={beforeUpload}

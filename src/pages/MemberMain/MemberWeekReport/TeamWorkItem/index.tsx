@@ -1,18 +1,24 @@
 import React, { useEffect, useState } from 'react'
 import style from '../index.module.scss'
-import { type IDomEditor, type IEditorConfig, type IToolbarConfig } from '@wangeditor/editor'
+import { t, type IDomEditor, type IEditorConfig, type IToolbarConfig } from '@wangeditor/editor'
 import { Editor, Toolbar } from '@wangeditor/editor-for-react'
-import { Input, InputNumber, TreeSelect, message } from 'antd'
+import { Button, Input, InputNumber, TreeSelect, Upload, message } from 'antd'
 import DeleteIcon from '../../../../assets/imgs/delete.png'
 import { postAvatar } from '../../../../api/Member'
 import { treeData } from '../../../../libs/data'
 import { type ITeamWork } from '../../../../libs/model'
+import AddIcon from '../../../../assets/imgs/add.png'
+import { UploadOutlined } from '@ant-design/icons'
+import { v4 as uuidv4 } from 'uuid'
 interface Props {
-  deleteWork: (id: string) => void
-  item: ITeamWork
-  updateWork: (type: 'workType' | 'duration' | 'content', id: string, value: string | number) => void
+  index: number
+  teamWorkLength: number
+  info: ITeamWork
+  teamWorks: ITeamWork[]
+  setTeamWorks: (x: ITeamWork[]) => void
+  deTeamWorks: (id: string) => void
 }
-export default function TeamWorkItem({ deleteWork, item, updateWork }: Props) {
+export default function TeamWorkItem({ teamWorks, setTeamWorks, info, deTeamWorks, index, teamWorkLength }: Props) {
   // 图片类型定义
   type InsertPicType = (url: string) => void
 
@@ -64,16 +70,81 @@ export default function TeamWorkItem({ deleteWork, item, updateWork }: Props) {
       }
     }
   }
-  const onChangeTeamWorkType = (newValue: string) => {
-    updateWork('workType', item.id, newValue)
+
+  const onChangeTeamWorkType = (value: string, id: string) => {
+    setTeamWorks(teamWorks.map(item => {
+      if (item.id === id) {
+        item.type = value
+      }
+      return item
+    }))
   }
 
-  const onChangeDuration = (newValue: number | null) => {
-    if (!newValue) {
-      message.info('服务时间不为空')
+  const onChangeDuration = (value: number | null, id: string) => {
+    setTeamWorks(teamWorks.map(item => {
+      if (item.id === id) {
+        item.duration = value
+      }
+      return item
+    }))
+  }
+
+  const onChangeTitle = (value: string, id: string) => {
+    setTeamWorks(teamWorks.map(item => {
+      if (item.id === id) {
+        item.title = value
+      }
+      return item
+    }))
+  }
+
+  const onChangeEditor = (value: string, id: string) => {
+    setTeamWorks(teamWorks.map(item => {
+      if (item.id === id) {
+        item.content = value
+      }
+      return item
+    }))
+  }
+
+  // 检查大小
+  const beforeUpload2 = async (file: File, id: string) => {
+    if (teamWorks[index].attach.length === 3) {
+      message.info('最多上传3个附件')
+      return false
     } else {
-      updateWork('duration', item.id, newValue)
+      const temp = new FormData()
+      temp.append('file', file)
+      const res = await postAvatar(temp)
+      if (res?.code === 200) {
+        const tempData = res.data.photo
+        setTeamWorks(teamWorks.map(item => {
+          if (item.id === id) {
+            item.attach = [...item.attach, { fileName: file.name, url: tempData }]
+          }
+          return item
+        }
+        ))
+      } else {
+        message.error('上传失败')
+      }
     }
+    const isLt2M = file.size / 1024 / 1024 < 20
+    if (!isLt2M) {
+      message.error('文件要小于20MB!')
+      return false
+    }
+    return true
+  }
+
+  // 删除文件
+  const deleteFile = (url: string, id: string) => {
+    setTeamWorks(teamWorks.map(item => {
+      if (item.id === id) {
+        item.attach = item.attach.filter(item2 => item2.url !== url)
+      }
+      return item
+    }))
   }
 
   // 及时销毁 editor ，重要！
@@ -85,39 +156,58 @@ export default function TeamWorkItem({ deleteWork, item, updateWork }: Props) {
     }
   }, [editor])
   return (
-    <div className={style.border}>
-      <img src={DeleteIcon} className={style.icon} onClick={() => deleteWork(item.id)}></img>
-      <TreeSelect
-        showSearch
-        style={{ width: '100%' }}
-        value={item.type?.toString()}
-        dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-        placeholder="请选择团队类型"
-        allowClear
-        treeDefaultExpandAll
-        onChange={onChangeTeamWorkType}
-        treeData={treeData}
-        treeNodeFilterProp="title"
-      />
-      <div className={style.timeLine}>
-        <InputNumber value={item.duration} onChange={onChangeDuration} min={1} className={style.inputNumber} placeholder='请输入服务时长（每半天为一个档）'></InputNumber>
-        <div className={style.label}>半天</div>
-      </div>
-      <div style={{ border: '1px solid #ccc', zIndex: 100 }}>
-        <Toolbar
-          editor={editor}
-          defaultConfig={toolbarConfig}
-          mode="default"
-          style={{ borderBottom: '1px solid #ccc' }}
+    <div>
+      <div className={style.border}>
+        {
+          index === teamWorkLength - 1 ? <img src={DeleteIcon} className={style.deleteIcon} onClick={() => deTeamWorks(info.id)}></img> : null
+        }
+        <Input style={{ marginBottom: '5px' }} placeholder='请填写贡献标题,最多50字' max={50} onChange={(e) => onChangeTitle(e.target.value, info.id)}></Input>
+        <TreeSelect
+          showSearch
+          style={{ width: '100%' }}
+          value={info.type?.toString()}
+          dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+          placeholder="请选择团队类型"
+          allowClear
+          treeDefaultExpandAll
+          onChange={(value: string) => onChangeTeamWorkType(value, info.id)}
+          treeData={treeData}
+          treeNodeFilterProp="title"
         />
-        <Editor
-          defaultConfig={editorConfig}
-          value={item.content}
-          onCreated={setEditor}
-          onChange={editor => updateWork('content', item.id, editor.getHtml())}
-          mode="default"
-          style={{ height: '300px', overflowY: 'hidden' }}
-        />
+        <div className={style.timeLine}>
+          <InputNumber value={info.duration} onChange={(value: number | null) => onChangeDuration(value, info.id)} min={1} className={style.inputNumber} placeholder='请输入服务时长（每半天为一个档）'></InputNumber>
+          <div className={style.label}>半天</div>
+        </div>
+        <div style={{ border: '1px solid #ccc', zIndex: 100, marginBottom: '5px' }}>
+          <Toolbar
+            editor={editor}
+            defaultConfig={toolbarConfig}
+            mode="default"
+            style={{ borderBottom: '1px solid #ccc' }}
+          />
+          <Editor
+            defaultConfig={editorConfig}
+            value={info.content}
+            onCreated={setEditor}
+            onChange={editor => onChangeEditor(editor.getHtml(), info.id)}
+            mode="default"
+            style={{ height: '300px', overflowY: 'hidden' }}
+          />
+        </div>
+        <Upload
+          showUploadList={false}
+          beforeUpload={(file: File) => beforeUpload2(file, info.id)}
+          customRequest={() => { }}
+        >
+          <Button icon={<UploadOutlined />}>选择附件</Button>
+        </Upload>
+        {
+          teamWorks[index].attach.map(item => <div key={item.url} className={style.urlBox}>
+            <a href={item.url} className={style.url}>{item.fileName}</a>
+            <img src={DeleteIcon} className={style.deleteFile} onClick={() => deleteFile(item.url, info.id)}></img>
+          </div>
+          )
+        }
       </div>
     </div>
   )

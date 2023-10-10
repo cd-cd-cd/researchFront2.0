@@ -68,8 +68,9 @@
 
 .border{
   box-shadow: 0 0 10px 0 rgb(58 58 58 / 7%);
-  padding: 25px;
+  padding: 10px;
   position: relative;
+  margin-bottom: 5px;
 }
 
 .icon {
@@ -82,20 +83,78 @@
 }
 
 .submit{
+  width: 200px;
   display: flex;
+  margin: 0 auto;
   flex-direction: row;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   margin-top: 10px;
 }
-// .AddIcon{
-//   width: 20px;
-//   height: 20px;
-//   display: inline-block;
-//   margin: 10px auto;
-//   cursor: pointer;
-// }
 
-// .AddIcon:hover {
-//   background-color: lightgray;
-// }
+.preview{
+  position: absolute;
+  top: -10px;
+  left: 0;
+  z-index: 999;
+  background-color: white;
+  height: 100%;
+  width: 100%;
+}
+
+.back{
+  position: relative;
+}
+
+.addIcon{
+  width: 20px;
+  height: 20px;
+  display: block;
+  margin: 5px auto;
+  cursor: pointer;
+}
+
+.deleteIcon{
+  width: 10px;
+  height: 10px;
+  display: block;
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  cursor: pointer;
+}
+
+.Teamworktitle{
+  font-size: 18px;
+  font-weight: 700;
+  color: dimgray;
+}
+
+.urlBox{
+  display: flex;
+  flex-direction: row;
+  margin: 2px 0;
+  align-items: center;
+}
+
+.url{
+  display: block;
+  width: 400px;
+}
+.deleteFile{
+  width: 10px;
+  height: 10px;
+  cursor: pointer;
+  display: block;
+  margin-left: 20px;
+}
+
+.type {
+  padding: 2px;
+  color: dimgray;
+}
+
+.time {
+  padding: 2px;
+  color: dimgray;
+}

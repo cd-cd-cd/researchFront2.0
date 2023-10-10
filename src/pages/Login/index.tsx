@@ -78,10 +78,10 @@ export default function Login() {
             <Form.Item
               name='username'
               rules={[
-                { required: true, message: '用户名不为空' }
+                { required: true, message: '学工号不为空' }
               ]}
             >
-              <Input placeholder='请输入用户名'>
+              <Input placeholder='请输入学工号'>
               </Input>
             </Form.Item>
             <Form.Item

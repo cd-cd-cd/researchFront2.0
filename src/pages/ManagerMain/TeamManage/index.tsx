@@ -96,12 +96,16 @@ export default function TeamManage() {
     }
   }
 
-  const renderRole = (role: IRole) => {
+  const renderRole = (role: IRole, record?: IMembersTable) => {
     switch (role) {
       case 2:
         return <Tag color='blue'>组长</Tag>
       case 3:
-        return <Tag color='green'>普通组员</Tag>
+        if (record && record.leaderName) {
+          return <Tag color='green'>组员</Tag>
+        } else {
+          return <Tag color='green'>未入组组员</Tag>
+        }
     }
   }
 
@@ -109,16 +113,17 @@ export default function TeamManage() {
     setLoading(true)
     const res = await getMember(range, current, 8)
     if (res?.code === 200) {
-      const temp: IMembersTable[] = res.data.records.reduce((pre: IMembersTable[], cur) => {
+      const temp: IMembersTable[] = res.data.userlist.reduce((pre: IMembersTable[], cur) => {
         pre.push({
-          key: cur.id,
-          createTime: dayjs(cur.createTime).format('YYYY-MM-DD'),
-          email: cur.email,
-          phone: cur.phone,
-          photo: cur.photo,
-          role: cur.role,
-          studentNo: cur.studentNo,
-          username: cur.username
+          key: cur.userInfo.id,
+          createTime: dayjs(cur.userInfo.createTime).format('YYYY-MM-DD'),
+          email: cur.userInfo.email,
+          phone: cur.userInfo.phone,
+          photo: cur.userInfo.photo,
+          role: cur.userInfo.role,
+          studentNo: cur.userInfo.studentNo,
+          username: cur.userInfo.username,
+          leaderName: cur.leaderInfo?.username ? cur.leaderInfo?.username : ''
         })
         return pre
       }, [])
@@ -443,10 +448,11 @@ export default function TeamManage() {
             title="角色"
             dataIndex="role"
             key="role"
-            render={(role: IRole, _: any) => renderRole(role)}
+            render={(role: IRole, record: IMembersTable) => renderRole(role, record)}
           />
           <Column title="邮箱" dataIndex="email" key="email" />
           <Column title="手机号" dataIndex="phone" key="phone" />
+          <Column title="组长" dataIndex="leaderName" key="leaderName"></Column>
           <Column title="组信息" dataIndex="groupInfo" key="groupInfo"
             render={(_, record: IMembersTable) => <a onClick={() => viewGroupInfo(record)}>查看</a>}
           ></Column>
@@ -508,7 +514,7 @@ export default function TeamManage() {
       >
         <Image src={excelImg} width={500}></Image>
         <div className={style.modalText}>提示1：上传excel表格第一行为列名，请严格按照列名填写学生信息</div>
-        <div className={style.modalText}>提示2：请上传xls格式文件</div>
+        <div className={style.modalText}>提示2：请上传xls或xlsx格式文件</div>
         <Upload
           showUploadList={false}
           beforeUpload={beforeUpload}

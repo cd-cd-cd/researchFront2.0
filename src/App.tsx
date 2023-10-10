@@ -4,7 +4,6 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import Login from './pages/Login'
 import Home from './pages/Home'
 import MInfo from './pages/ManagerMain/MInfo'
-import Device from './components/CommonPage/Device'
 import { type ITabBarCommon } from './libs/model'
 import { StoreProvider } from './hooks/store'
 import Register from './pages/Register'
@@ -14,6 +13,11 @@ import MDevice from './pages/ManagerMain/MDevice'
 import MemberDevice from './pages/MemberMain/MemberDevice'
 import MemberWeekReport from './pages/MemberMain/MemberWeekReport'
 import LDevice from './pages/LeaderMain/LDevice'
+import MemberHistoryReport from './pages/MemberMain/MemberHistoryReport'
+import MSBReport from './pages/ManagerMain/MSBReport'
+import MAllReport from './pages/ManagerMain/MAllReport'
+import LeaderHistoryReport from './pages/LeaderMain/LeaderHistoryReport'
+import LSBReport from './pages/LeaderMain/LSBReport'
 
 function App() {
   const [tabBarList, setTabBarList] = useState<ITabBarCommon[]>([])
@@ -32,16 +36,23 @@ function App() {
             <Route path='personInfo' element={<MInfo />}></Route>
             <Route path='memberDevice' element={<MemberDevice />}></Route>
             <Route path='MemberWeekReport' element={<MemberWeekReport/>}></Route>
+            <Route path='MemberHistoryReport' element={<MemberHistoryReport/>}></Route>
           </Route>
           <Route path='leader' element={<Home />}>
             <Route path='personInfo' element={<MInfo />}></Route>
             <Route path='groupManage' element={<GroupManage/>}></Route>
             <Route path='ldevice' element={<LDevice />}></Route>
+            <Route path='LeaderWeekReport' element={<MemberWeekReport/>}></Route>
+            <Route path='LeaderHistoryReport' element={<LeaderHistoryReport/>}></Route>
+            <Route path='LSBReport' element={<LSBReport/>}></Route>
+            <Route path='LAllReport' element={<MAllReport/>}></Route>
           </Route>
           <Route path='manager' element={<Home />}>
             <Route path='MInfo' element={<MInfo />}></Route>
             <Route path='TeamManage' element={<TeamManage/>}></Route>
             <Route path='MDevice' element={<MDevice/>}></Route>
+            <Route path='MSBReport' element={<MSBReport/>}></Route>
+            <Route path='MAllReport' element={<MAllReport/>}></Route>
           </Route>
           <Route path='register' element={<Register/>}></Route>
           <Route path='*' element={<Navigate to='/login' />}></Route>

@@ -1,4 +1,4 @@
-import { type IDeviceApply, type IManagerRole } from "../../libs/model"
+import { type IWeekProgress, type IDeviceApply, type IManagerRole, type IWeekPlan, type IBaseTeamWork, type IGetMyWeekReport } from "../../libs/model"
 import request from "../../utils/request"
 import { type IEquipment } from "../Manager"
 
@@ -98,6 +98,56 @@ export const cencelrecord = async (recordid: string) => {
     method: 'POST',
     params: {
       recordid
+    }
+  })
+}
+
+// 上传周报
+export const addweeklyreport = async (
+  time: string,
+  year: string,
+  month: string,
+  week: string,
+  weekProgress: IWeekProgress,
+  weekPlan: IWeekPlan,
+  teamWorks: IBaseTeamWork[]
+) => {
+  return await request({
+    url: '/v1/report/management/addweeklyreport/',
+    method: 'POST',
+    data: {
+      time,
+      year,
+      month,
+      week,
+      weekProgress,
+      weekPlan,
+      teamWorks
+    }
+  })
+}
+
+// 获取周报
+export const getMyWeekReport = async (pageNum: number, pageSize: number) => {
+  return await request<IGetMyWeekReport>({
+    url: '/v1/report/management/getweeklyreport/',
+    method: 'GET',
+    params: {
+      pageNum,
+      pageSize
+    }
+  })
+}
+
+// 回复周报
+export const addreportcomment = async (reportId: string, content: string, roleGroup: number) => {
+  return await request({
+    url: '/v1/report/comment/addreportcomment/',
+    method: 'POST',
+    data: {
+      reportId,
+      content,
+      roleGroup
     }
   })
 }

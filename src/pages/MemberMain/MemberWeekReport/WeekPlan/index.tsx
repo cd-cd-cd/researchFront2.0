@@ -1,15 +1,18 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import style from '../index.module.scss'
 import { type IDomEditor, type IEditorConfig, type IToolbarConfig } from '@wangeditor/editor'
+import { UploadOutlined } from '@ant-design/icons'
 import { Editor, Toolbar } from '@wangeditor/editor-for-react'
-import { message } from 'antd'
+import { Button, Upload, message } from 'antd'
 import { postAvatar } from '../../../../api/Member'
+import { type IWeekProgress } from '../../../../libs/model'
+import DeleteIcon from '../../../../assets/imgs/delete.png'
 interface Props {
-  weekPlanHtml: string
-  setWeekPlanHtml: (x: string) => void
+  weekProgress: IWeekProgress
+  setWeekProgress: (x: IWeekProgress) => void
 }
 
-export default function WeekPlan({ weekPlanHtml, setWeekPlanHtml }: Props) {
+export default function WeekPlan({ weekProgress, setWeekProgress }: Props) {
   // 图片类型定义
   type InsertPicType = (url: string) => void
 
@@ -49,6 +52,28 @@ export default function WeekPlan({ weekPlanHtml, setWeekPlanHtml }: Props) {
     return isPNG && isLt2M
   }
 
+  // 检查大小
+  const beforeUpload2 = async (file: File) => {
+    if (weekProgress.attach.length === 3) {
+      message.info('最多上传3个附件')
+      return false
+    } else {
+      const temp = new FormData()
+      temp.append('file', file)
+      const res = await postAvatar(temp)
+      if (res?.code === 200) {
+        const tempData = res.data.photo
+        setWeekProgress({ ...weekProgress, attach: [...weekProgress.attach, { fileName: file.name, url: tempData }] })
+      }
+    }
+    const isLt2M = file.size / 1024 / 1024 < 20
+    if (!isLt2M) {
+      message.error('文件要小于20MB!')
+      return false
+    }
+    return true
+  }
+
   editorConfig.MENU_CONF!['uploadImage'] = {
     async customUpload(richPic: File, insertFn: InsertPicType) {
       if (beforeUpload(richPic)) {
@@ -62,6 +87,11 @@ export default function WeekPlan({ weekPlanHtml, setWeekPlanHtml }: Props) {
     }
   }
 
+  // 删除文件
+  const deleteFile = (url: string) => {
+    setWeekProgress({ ...weekProgress, attach: weekProgress.attach.filter(item => item.url !== url) })
+  }
+
   // 及时销毁 editor ，重要！
   useEffect(() => {
     return () => {
@@ -73,7 +103,7 @@ export default function WeekPlan({ weekPlanHtml, setWeekPlanHtml }: Props) {
   return (
     <div className={style.partOne}>
       <div className={style.headOne}>一、本周进展</div>
-      <div style={{ border: '1px solid #ccc', zIndex: 100 }}>
+      <div style={{ border: '1px solid #ccc', zIndex: 100, marginBottom: '5px' }}>
         <Toolbar
           editor={editor}
           defaultConfig={toolbarConfig}
@@ -82,13 +112,27 @@ export default function WeekPlan({ weekPlanHtml, setWeekPlanHtml }: Props) {
         />
         <Editor
           defaultConfig={editorConfig}
-          value={weekPlanHtml}
+          value={weekProgress.content}
           onCreated={setEditor}
-          onChange={editor => setWeekPlanHtml(editor.getHtml())}
+          onChange={editor => setWeekProgress({ ...weekProgress, content: editor.getHtml() })}
           mode="default"
           style={{ height: '300px', overflowY: 'hidden' }}
         />
       </div>
+      <Upload
+        showUploadList={false}
+        beforeUpload={beforeUpload2}
+        customRequest={() => { }}
+      >
+        <Button icon={<UploadOutlined />}>选择附件</Button>
+      </Upload>
+      {
+        weekProgress.attach.map(item => <div key={item.url} className={style.urlBox}>
+          <a href={item.url} className={style.url}>{item.fileName}</a>
+          <img src={DeleteIcon} className={style.deleteFile} onClick={() => deleteFile(item.url)}></img>
+        </div>
+        )
+      }
     </div>
   )
 }
