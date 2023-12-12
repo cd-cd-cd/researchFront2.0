@@ -1,0 +1,145 @@
+.top_div {
+  padding: 5px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.top_div_btn{
+  margin-left: 5px;
+}
+
+.btn_box {
+  padding: 0 100px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+.remind_text {
+  margin-top: 10px;
+  color: gray;
+  padding-left: 10px;
+}
+
+.groupInfo {
+  box-shadow: 0 0 10px 0 rgba(58, 58, 58, 0.07);
+  margin-top: 20px;
+  padding: 10px;
+  color: dimgray;
+}
+.memberlist{
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.memberBox{
+  display: flex;
+  flex-direction: row;
+  margin-top: 10px;
+}
+
+.noGroup{
+  display: flex;
+  justify-content: space-between;
+}
+
+.groupHead{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.selectOption {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+.drawer {
+  height: 100%;
+  position: relative;
+}
+.bottom{
+  position: absolute;
+  bottom: 0;
+  right: 50%;
+}
+
+.tag{
+  height: 21.6px;
+}
+
+.excelImg{
+  width: 80%;
+}
+
+.modalText{
+  color: dimgray;
+  margin-top: 5px;
+  margin-bottom: 10px;
+}
+
+.fileName{
+  color: dimgray;
+  margin-left: 6px;
+}
+
+.uploadClick_box {
+  margin-top: 5px;
+}
+
+.height {
+  :global {
+    .ant-table-tbody>tr>td {
+      padding: 14px 14px;
+      text-align: center;
+    }
+
+    .ant-table-thead>tr>th {
+      padding: 10px;
+      text-align: center;
+    }
+  }
+}
+
+.height2 {
+  :global {
+    .ant-table-tbody>tr>td {
+      padding: 8px 12px;
+      text-align: center;
+    }
+
+    .ant-table-thead>tr>th {
+      padding: 10px;
+      text-align: center;
+    }
+  }
+}
+
+.file_box_btn{
+  padding: 0 100px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.text {
+  color: rgb(255, 55, 0);
+  margin-left: 6px;
+}
+
+.row{
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 5px;
+}
+
+.label {
+  width: 70px;
+  margin-right: 10px;
+  text-align: end;
+}

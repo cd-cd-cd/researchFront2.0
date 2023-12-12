@@ -1,0 +1,47 @@
+.back{
+  width: 100%;
+}
+
+.btn_box{
+  display: flex;
+  padding-left: 10px;
+  justify-content: space-between;
+
+  .btn{
+    margin-right: 10px;
+  }
+}
+
+.right_btn{
+  margin-right: 10px;
+}
+
+.btns_box{
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  margin-left: 50px;
+}
+
+.textDiv{
+  margin: 10px 0;
+}
+
+.modalText{
+  font-size: 12px;
+  color: gray;
+}
+
+.uploadClick_box{
+  margin-top: 10px;
+}
+
+.fileName{
+  margin-left: 5px;
+  color: dimgray;
+}
+.text{
+  color: red;
+  margin-left: 5px;
+  margin-bottom: 5px;
+}

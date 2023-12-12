@@ -1,0 +1,166 @@
+.back {
+  width: 90%;
+  padding: 10px;
+  margin: 20px;
+}
+
+.info_box {
+  width: 100%;
+  padding: 30px 40px max(30px) 40px;
+  box-shadow: 0 0 10px 0 rgb(58 58 58 / 7%);
+  border-radius: 5px;
+  color: #383838;
+
+  .person_bpx {
+    display: flex;
+    flex-direction: row;
+    margin-top: 10px;
+
+    .info {
+      flex: 1;
+      padding-left: 45px;
+      display: flex;
+      flex-direction: column;
+      display: grid;
+      grid-template-columns: repeat(2, 75px 320px);
+      grid-template-rows: 58px 58px auto;
+
+      .resume {
+        grid-column: 2/5;
+        cursor: pointer;
+      }
+
+      .resume_text {
+        grid-column: 2/5;
+      }
+    }
+  }
+
+
+}
+
+.changeInfo {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.input {
+  height: 35px;
+  width: 200px;
+}
+
+.warn {
+  color: rgb(237, 57, 57);
+}
+
+.modify {
+  color: #2e68f8;
+  cursor: pointer;
+  margin-right: 15px;
+}
+
+.modify:hover {
+  color: rgb(67, 119, 248);
+}
+
+.modify_resume {
+  color: #2e68f8;
+  cursor: pointer;
+  float: right;
+  margin-right: 15px;
+}
+
+.modify_resume:hover {
+  color: rgb(67, 119, 248);
+}
+
+
+.btns {
+  margin-right: 15px;
+}
+
+.confirm {
+  margin-left: 5px;
+}
+
+.resume_btns {
+  float: right;
+  margin-top: 5px;
+}
+
+.title {
+  color: #969696;
+}
+
+.secure_box {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.password_box {
+  width: 100%;
+  padding: 30px 40px max(30px) 40px;
+  box-shadow: 0 0 10px 0 rgb(58 58 58 / 7%);
+  border-radius: 5px;
+  margin-top: 15px;
+  color: #383838;
+}
+
+.nullText {
+  color: gray;
+}
+
+.avatar {
+  width: 150px;
+  max-height: 199px;
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.3s;
+
+  .avatarIcon {
+    width: 100%;
+  }
+}
+
+.avatar:hover {
+  box-shadow: 0 0 10px 0 rgb(199, 224, 246);
+}
+
+.bigBox{
+  display: flex;
+  flex-direction: row;
+  padding: 0 40px;
+  justify-content: space-around;
+
+  .init_box{
+    width: 120px;
+    max-height: 170px;
+
+    .init_img{
+      width: 100%;
+    }
+  }
+
+  .upload_box{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.btn_box{
+  width: 100%;
+  display: flex;
+  justify-content: space-evenly;
+  margin-left: 30px;
+  margin-top: 10px;
+}
+
+.back_mask{
+  position: relative;
+}

@@ -1,0 +1,29 @@
+.colOneToFour {
+  margin: 3px 0;
+}
+
+.label2{
+  color: gray;
+  margin-right: 5px;
+}
+
+.show_box{
+  padding: 15px;
+  width: 500px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 0 10px 0 rgb(58 58 58 / 7%);
+  transition: all 0.3s;
+  margin-bottom: 5px;
+}
+
+.textArea{
+  margin-top: 5px;
+  display: flex;
+  flex-direction: row;
+  align-items: end;
+}
+
+.confirm{
+  margin-left: 5px;
+}

@@ -1,0 +1,75 @@
+.height {
+  :global {
+    .ant-table-tbody>tr>td {
+      padding: 14px 14px;
+    }
+
+    .ant-table-thead>tr>th {
+      padding: 9px;
+      text-align: center;
+    }
+  }
+}
+
+.btn_box {
+  margin-left: 35%;
+  width: 50%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.header_box{
+  padding: 5px;
+}
+
+.excelImg{
+  width: 80%;
+}
+
+.modalText{
+  color: dimgray;
+  margin-top: 5px;
+  margin-bottom: 10px;
+}
+
+.fileName{
+  color: dimgray;
+  margin-left: 6px;
+}
+
+.uploadClick_box {
+  margin-top: 5px;
+}
+
+.text {
+  color: rgb(255, 55, 0);
+  margin-left: 6px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.a_box {
+  display: flex;
+  flex-direction: column;
+}
+
+.height2{
+  :global {
+    .ant-table-tbody>tr>td {
+      padding: 10px 10px;
+    }
+
+    .ant-table-thead>tr>th {
+      padding: 9px;
+      text-align: center;
+    }
+  }
+}
+
+.labelDiv{
+  margin-bottom: 5px;
+  margin-left: 5px;
+  color: dimgray;
+  font-weight: 700;
+}

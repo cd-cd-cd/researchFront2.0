@@ -1,0 +1,8 @@
+{
+  "cSpell.words": [
+    "wangeditor"
+  ],
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
+}
